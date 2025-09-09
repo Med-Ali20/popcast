@@ -1,0 +1,206 @@
+"use client";
+
+import React, { useRef, useEffect, useState } from "react";
+import { Zoom, Slide, Fade, Bounce } from "react-awesome-reveal";
+import "./styles.css";
+
+const Hero = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [eyeAnimationActive, setEyeAnimationActive] = useState(false);
+  const cardRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          // Trigger eye animations with a slight delay after background animation
+          setTimeout(() => {
+            setEyeAnimationActive(true);
+          }, 300);
+          // Optionally disconnect after first trigger
+          observer.disconnect();
+        }
+      },
+      {
+        threshold: 0.3, // Trigger when 30% of element is visible
+        rootMargin: "0px 0px -50px 0px", // Adjust trigger point
+      }
+    );
+
+    if (cardRef.current) {
+      observer.observe(cardRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div className="w-full flex items-center justify-center mt-[7vw]">
+      <div className="w-[90%] md:w-[50%] mx-auto font-emirates relative">
+        {/* Background that starts at 40% height on md+ screens */}
+        <div className="absolute inset-0 bg-[rgba(255,255,255,0.4)] rounded-lg lg:top-[27vw]"></div>
+
+        {/* Content with relative positioning and padding */}
+        <div className="relative flex flex-col p-8 md:pt-0">
+          {/* Images container with fixed aspect ratio */}
+          <Slide direction="up" cascade triggerOnce>
+            <div className="relative w-[70vw] z-20 md:w-[60vw] ml-[10%] -mr-[40%] md:-ml-[20%] lg:-ml-[15%] aspect-video min-h-[300px]">
+              {/* First two images with Zoom animation */}
+              <Zoom triggerOnce delay={0}>
+                <img
+                  src="/elements/02.png"
+                  alt=""
+                  className="absolute w-full top-[0] left-[40%] md:-top-[20%] md:left-1/2 -translate-x-1/2"
+                />
+              </Zoom>
+
+              <Zoom triggerOnce delay={200}>
+                <img
+                  src="/elements/03.png"
+                  alt=""
+                  className="absolute w-full -top-[2%] left-[35%] md:-top-[5%] md:left-[42.857%] -translate-x-1/2"
+                />
+              </Zoom>
+
+              {/* Rest of the images with Fade animation to avoid positioning issues */}
+              <Slide direction="up" triggerOnce delay={400}>
+                <img
+                  src="/elements/06.png"
+                  alt=""
+                  className="absolute w-3/5 top-[5%] left-[15%] md:w-2/5 md:top-0 md:left-1/4 -translate-x-1/2"
+                />
+              </Slide>
+
+              <img
+                src="/elements/04.png"
+                alt=""
+                className="absolute w-3/5 -top-[10%] left-1/2 md:w-2/5 md:-top-[20%] md:left-1/2 -translate-x-1/2"
+              />
+
+              <img
+                src="/elements/01.png"
+                alt=""
+                className="absolute w-4/5 top-[24%] -right-[15%] md:w-1/2 md:top-0 md:-right-[5%]"
+              />
+
+              <img
+                src="/elements/07.png"
+                alt=""
+                className="absolute w-1/2 left-[0%] top-[40%] md:w-1/3 md:left-[5%] md:top-[30%]"
+              />
+              <img
+                src="/elements/05.png"
+                alt=""
+                className="absolute w-3/5 left-[20%] top-[45%] md:w-2/5 md:left-[30%] md:top-[35%]"
+              />
+
+              <img
+                src="/elements/10.png"
+                alt=""
+                className="absolute md:w-[35.6%] w-[58%] -left-[15%] md:left-[10%] top-[88%] md:top-[80%] md:left-[15%] md:top-[85%]"
+              />
+              <img
+                src="/elements/09.png"
+                alt=""
+                className="absolute w-3/5 -left-[15%] md:left-[10%] top-[80%] md:w-2/5 md:left-[15%] md:top-[75%]"
+              />
+
+              <img
+                src="/elements/08.png"
+                alt=""
+                className="absolute w-3/5 right-0 md:right-[-5%] top-[75%] md:w-2/5 md:right-[5%] md:top-[70%]"
+              />
+            </div>
+          </Slide>
+
+          {/* Text content with top padding on md+ to account for background */}
+          <Fade triggerOnce>
+            <div className="mt-[18vw] pt-[20%] md:pt-0">
+              <p
+                dir="rtl"
+                className="text-justify w-full text-secondary lg:text-3xl lg:leading-11 px-3"
+              >
+                <span className="font-bold">بـوب كاست</span> هو مساحة إبداعية
+                جديدة انطلقت عام 2025 كامتداد لمشروع ArabiaPop، لكن بروح مختلفة
+                وأكثر حرية. يفتح الباب للحوار والتجارب، من خلال حلقات بودكاست مع
+                صناع الموسيقى والجمهور، وميني-دوكـوس تروي قصص من وراء الكواليس،
+                ومقالات تحليلية تغوص في تاريخ البوب العربي. بوب كاست يعيد قراءة
+                العقود الذهبية لثقافتنا الشعبية – من الثمانينات، إلى الطفرة في
+                التسعينات، مرورًا بعصر القنوات الفضائية في الألفينات، وصولاً إلى
+                التحديات الرقمية في العقد الأخير – ليقدّم أرشيفًا حيًّا وتجربة
+                تفاعلية تربط الماضي بالحاضر.
+              </p>
+            </div>
+          </Fade>
+
+          <div className="w-full flex flex-col-reverse lg:flex-row lg:gap-10 text-right text-white mt-12">
+            <div className="flex w-[100%] items-center a cursor-pointer shadow-2xl rounded-2xl py-4 lg:w-[50%] mt-6 lg:mt-0 pr-4">
+              <div className="ml-auto">
+                <h3 className="text-2xl lg:text-4xl font-bold">اقرأ</h3>
+                <p className="text-lg">مقالات بوب كاست</p>
+              </div>
+              <img src="/elements/13.png" alt="" className="w-[70px] ml-5" />
+            </div>
+            <div
+              ref={cardRef}
+              className="flex w-[100%] a cursor-pointer items-center py-3 pr-4 rounded-2xl lg:w-[50%] relative overflow-hidden"
+            >
+              {/* Animated background that expands from right to left */}
+              <div
+                className={`absolute inset-0 bg-[rgba(0,0,0,0.3)] rounded-2xl origin-right transform transition-transform duration-800 ease-out ${
+                  isVisible ? "scale-x-100" : "scale-x-0"
+                }`}
+              ></div>
+
+              {/* Content stays in place */}
+              <div className="ml-auto relative ">
+                <h3 className="text-2xl lg:text-4xl font-bold">شاهد</h3>
+                <p className="text-lg">محتوى بصري</p>
+              </div>
+              <div className="relative w-fit ml-5">
+                <img
+                  src="/elements/eye.png"
+                  alt=""
+                  className="w-[70px] h-[70px] object-contain relative"
+                />
+                {/* Pupil - only animate when triggered */}
+                <span
+                  className={`absolute inset-0 w-[20px] h-[20px] 
+                   bg-white rounded-full 
+                   top-1/2 left-1/2 
+                   -translate-x-1/2 -translate-y-1/2 `}
+                   style={{
+                    animation: eyeAnimationActive? 'float 2s' : 'none',
+                   }}
+                ></span>
+                {/* Top eyelid - only animate when triggered */}
+                <span
+                  className={`absolute inset-0 w-[0] h-[16px] 
+                   bg-white rounded-t-full 
+                   md:top-[42%] md:left-1/2 top-[42%] left-[25%] origin-top hidden md:block
+                   -translate-x-1/2 -translate-y-1/2 `}
+                   style={{
+                    animation: eyeAnimationActive? 'blink 1s 2s' : 'none',
+                   }}
+                ></span>
+                {/* Bottom eyelid - only animate when triggered */}
+                <span
+                  className={`absolute inset-0 h-[18px] w-[0]
+                   bg-white rounded-t-full 
+                   md:top-[86%] md:left-1/2 top-[86%] left-[25%] origin-top hidden md:block
+                   -translate-x-1/2 -translate-y-1/2 rotate-180`}
+                   style={{
+                    animation: eyeAnimationActive? 'blink 1s 2s' : 'none',
+                   }}
+                ></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Hero;

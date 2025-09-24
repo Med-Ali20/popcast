@@ -17,7 +17,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="bg-primary text-secondary flex w-full items-center px-6 md:px-12 py-4 lg:py-2 fixed top-0 z-10 font-emirates">
+      <header className="bg-primary text-secondary flex w-full items-center px-6 md:px-12 py-4 lg:py-2 sticky top-0 z-10 font-emirates">
         <img src="/elements/08.png" className="w-[50px] md:w-[100px] mr-auto" alt="" />
         
         {/* Desktop Menu */}

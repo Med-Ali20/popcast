@@ -5,7 +5,7 @@ import History from "./sections/homepage/history";
 
 export default function Home() {
   return (
-      <main className="pt-[20%] lg:pt-[10%]">
+      <main>
         <Hero/>
         <About />
         <History />

@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic"; // prevent prerender crash
 
 export default function PodcastPage() {
   return (
-    <Suspense fallback={<div>Loading podcasts...</div>}>
+    <Suspense fallback={<div className="min-h-[90vh]">Loading podcasts...</div>}>
       <PodcastClientPage />
     </Suspense>
   );

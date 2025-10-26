@@ -1,11 +1,21 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -15,41 +25,43 @@ const Header = () => {
     setIsMenuOpen(false);
   };
 
+  // Dynamic classes and images based on scroll state
+  const headerBg = isScrolled ? "bg-secondary" : "bg-primary";
+  const textColor = isScrolled ? "text-primary" : "text-secondary";
+  const logoSrc = isScrolled ? "/images/PopCast Horizontal Logo-2.png" : "/images/PopCast Horizontal Logo.png";
+  const iconSrc = isScrolled ? "/elements/36.png" : "/elements/26.png";
+
   return (
     <>
-      <header className="bg-primary text-secondary flex w-full items-center px-6 md:px-12 py-4 sticky top-0 z-100 font-emirates">
+      <header className={`${headerBg} ${textColor} flex w-full items-center px-6 md:px-12 py-4 sticky top-0 z-100 font-emirates transition-colors duration-300`}>
         <a href="/" className="mr-auto">
           <img
-            src="/images/PopCast Horizontal Logo.png"
-            className="w-[90px] md:w-[140px] "
-            alt=""
+            src={logoSrc}
+            className="w-[90px] md:w-[140px]"
+            alt="PopCast Logo"
           />
         </a>
 
         {/* Desktop Menu */}
         <ul className="flex items-center justify-around font-semibold text-lg hidden md:flex list-none">
           <li className="mx-4">
-            <Link href="/contact" className="text-secondary no-underline">
-              {" "}
-              التواصل{" "}
+            <Link href="/contact" className={`${textColor} no-underline`}>
+              التواصل
             </Link>
           </li>
           <li className="mx-4">
-            <Link href="/article" className="text-secondary no-underline">
-              {" "}
-              المقالات{" "}
+            <Link href="/article" className={`${textColor} no-underline`}>
+              المقالات
             </Link>
           </li>
           <li className="mx-4">
-            <Link href="/podcast" className="text-secondary no-underline">
-              {" "}
-              البودكاست{" "}
+            <Link href="/podcast" className={`${textColor} no-underline`}>
+              البودكاست
             </Link>
           </li>
           <li className="mr-4 ml-12">
             <Link href="/">
-              {" "}
-              <img src="/elements/26.png" className="w-[60px]" alt="" />{" "}
+              <img src={iconSrc} className="w-[60px]" alt="Icon" />
             </Link>
           </li>
         </ul>
@@ -57,7 +69,7 @@ const Header = () => {
         {/* Mobile Menu Button */}
         <button
           onClick={toggleMenu}
-          className="md:hidden text-secondary p-2 focus:outline-none"
+          className={`md:hidden ${textColor} p-2 focus:outline-none`}
           aria-label="Toggle menu"
         >
           <Menu size={24} />
@@ -67,7 +79,7 @@ const Header = () => {
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
         <div
-          className="fixed inset-0  bg-[rgba(0,0,0,0.5)] z-20 md:hidden"
+          className="fixed inset-0 bg-[rgba(0,0,0,0.5)] z-20 md:hidden"
           onClick={closeMenu}
         />
       )}

@@ -259,9 +259,7 @@ const ArticlesPage: React.FC = () => {
       }
 
       const baseUrl =
-        typeof window === "undefined"
-          ? "http://localhost:3001"
-          : "http://127.0.0.1:3001";
+        process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3001";
 
       const response = await fetch(`${baseUrl}/article?${params}`);
       const data = await response.json();

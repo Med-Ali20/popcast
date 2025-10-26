@@ -258,7 +258,7 @@ const ArticlesPage: React.FC = () => {
         params.append("search", search);
       }
 
-      const response = await fetch(`127.0.0.1:3001/article?${params}`);
+      const response = await fetch(`http://127.0.0.1:3001/article?${params}`);
       const data = await response.json();
 
       setArticles(data.articles || []);

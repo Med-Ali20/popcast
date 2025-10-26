@@ -226,7 +226,7 @@ const About = () => {
         params.append("search", search);
       }
 
-      const response = await fetch(`http://localhost:3001/article?${params}`);
+      const response = await fetch(`http://3.70.229.133:3001/article?${params}`);
       const data = await response.json();
 
       setArticle(data.articles[0] || null);
@@ -251,7 +251,7 @@ const About = () => {
         params.append("search", search);
       }
 
-      const response = await fetch(`http://localhost:3001/podcast?${params}`);
+      const response = await fetch(`http://3.70.229.133:3001/podcast?${params}`);
       const data = await response.json();
 
       setPodcast(data.podcasts[0] || null);

@@ -62,7 +62,7 @@ const PodcastUpload = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch("http://localhost:3001/category");
+      const response = await fetch("http://3.70.229.133:3001/category");
       if (response.ok) {
         const data = await response.json();
         setCategories(data);
@@ -80,7 +80,7 @@ const PodcastUpload = () => {
 
     setIsCreatingCategory(true);
     try {
-      const response = await fetch("http://localhost:3001/category", {
+      const response = await fetch("http://3.70.229.133:3001/category", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -211,7 +211,7 @@ const PodcastUpload = () => {
         data.append("thumbnail", thumbnailFile);
       }
 
-      const response = await fetch("http://localhost:3001/podcast", {
+      const response = await fetch("http://3.70.229.133:3001/podcast", {
         method: "POST",
         body: data,
         headers: {

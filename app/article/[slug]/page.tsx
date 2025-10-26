@@ -23,7 +23,7 @@ function createMetaDescription(content: string, maxLength: number = 155): string
 // Generate dynamic metadata for SEO
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
-    const response = await fetch(`http://localhost:3001/article/${params.slug}`, {
+    const response = await fetch(`http://3.70.229.133:3001/article/${params.slug}`, {
       cache: 'no-store', // Always fetch fresh data
     });
 
@@ -98,7 +98,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 // Server component that fetches data and passes to client
 export default async function ArticlePage({ params }: Props) {
   try {
-    const response = await fetch(`http://localhost:3001/article/${params.slug}`, {
+    const response = await fetch(`http://3.70.229.133:3001/article/${params.slug}`, {
       cache: 'no-store',
     });
 

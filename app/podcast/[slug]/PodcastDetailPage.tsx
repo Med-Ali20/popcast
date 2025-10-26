@@ -52,7 +52,7 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch("http://localhost:3001/category?type=podcast");
+      const response = await fetch("http://3.70.229.133:3001/category?type=podcast");
       if (response.ok) {
         const data = await response.json();
         setCategories(data);
@@ -74,7 +74,7 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
     setIsDeleting(true);
     try {
       const response = await fetch(
-        `http://localhost:3001/podcast/${podcast._id}`,
+        `http://3.70.229.133:3001/podcast/${podcast._id}`,
         {
           method: "DELETE",
           headers: {
@@ -116,7 +116,7 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
       }
 
       const response = await fetch(
-        `http://localhost:3001/podcast/${podcast._id}`,
+        `http://3.70.229.133:3001/podcast/${podcast._id}`,
         {
           method: "PATCH",
           headers: {

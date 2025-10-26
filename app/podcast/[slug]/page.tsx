@@ -23,7 +23,7 @@ function createMetaDescription(description: string, maxLength: number = 155): st
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
-    const response = await fetch(`http://localhost:3001/podcast/${params.slug}`, {
+    const response = await fetch(`http://3.70.229.133:3001/podcast/${params.slug}`, {
       cache: 'no-store',
     });
 
@@ -100,7 +100,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PodcastPage({ params }: Props) {
   try {
-    const response = await fetch(`http://localhost:3001/podcast/${params.slug}`, {
+    const response = await fetch(`http://3.70.229.133:3001/podcast/${params.slug}`, {
       cache: 'no-store',
     });
 

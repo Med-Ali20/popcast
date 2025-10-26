@@ -35,7 +35,7 @@ const ArticleDetailPage = ({ initialArticle }: ArticleDetailPageProps) => {
     setIsDeleting(true);
     try {
       const response = await fetch(
-        `http://localhost:3001/article/${article._id}`,
+        `http://3.70.229.133:3001/article/${article._id}`,
         {
           method: "DELETE",
           headers: {
@@ -72,7 +72,7 @@ const ArticleDetailPage = ({ initialArticle }: ArticleDetailPageProps) => {
       }
 
       const response = await fetch(
-        `http://localhost:3001/article/${article._id}`,
+        `http://3.70.229.133:3001/article/${article._id}`,
         {
           method: "PATCH",
           headers: {
@@ -103,7 +103,7 @@ const ArticleDetailPage = ({ initialArticle }: ArticleDetailPageProps) => {
   ) => {
     try {
       const response = await fetch(
-        `http://localhost:3001/article/${article._id}/status`,
+        `http://3.70.229.133:3001/article/${article._id}/status`,
         {
           method: "PATCH",
           headers: {

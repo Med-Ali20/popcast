@@ -263,7 +263,7 @@ const ArticlesPage: React.FC = () => {
           ? "http://localhost:3001"
           : "http://127.0.0.1:3001";
 
-      const response = await fetch(`${baseUrl}?${params}`);
+      const response = await fetch(`${baseUrl}/article?${params}`);
       const data = await response.json();
 
       setArticles(data.articles || []);

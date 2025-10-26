@@ -1,116 +1,181 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react'
-import { AlertCircle, User, Lock, Trash2, UserPlus, Shield } from 'lucide-react'
+import React, { useState, useEffect } from "react";
+import {
+  AlertCircle,
+  User,
+  Lock,
+  Trash2,
+  UserPlus,
+  Shield,
+  Loader2,
+} from "lucide-react";
+
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const ManageAdminUsers = () => {
-  const [isLoading, setIsLoading] = useState(false)
-  const [generalError, setGeneralError] = useState('')
-  const [errors, setErrors] = useState<{ [key: string]: string }>({})
+  const [isLoading, setIsLoading] = useState(false);
+  const [isFetchingAdmins, setIsFetchingAdmins] = useState(true);
+  const [generalError, setGeneralError] = useState("");
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [formData, setFormData] = useState({
-    username: '',
-    password: ''
-  })
-  
-  // Sample admin users - replace with actual data from API
-  const [adminUsers, setAdminUsers] = useState([
-    { id: '1', username: 'admin@example.com' },
-    { id: '2', username: 'john.doe@example.com' },
-    { id: '3', username: 'jane.smith@example.com' }
-  ])
+    username: "",
+    password: "",
+  });
+
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  const [adminUsers, setAdminUsers] = useState<
+    Array<{ id: string; username: string }>
+  >([]);
+
+  // Fetch admin users on component mount
+  useEffect(() => {
+    if (status === "authenticated" && session?.accessToken) {
+      fetchAdminUsers();
+    }
+  }, [status, session]);
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/admin/login");
+    }
+  }, [session, status]);
+
+  const fetchAdminUsers = async () => {
+    setIsFetchingAdmins(true);
+    try {
+      const response = await fetch("http://localhost:3001/admin", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${session?.accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch admin users");
+      }
+
+      const data = await response.json();
+      // Assuming the API returns an array of admins with _id and username
+      const formattedAdmins = data.map((admin: any) => ({
+        id: admin.id || admin._id,
+        username: admin.username,
+      }));
+      setAdminUsers(formattedAdmins);
+    } catch (error) {
+      console.error("Error fetching admins:", error);
+      setGeneralError("Failed to load admin users");
+    } finally {
+      setIsFetchingAdmins(false);
+    }
+  };
 
   const handleChange = (e: any) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
+    const { name, value } = e.target;
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
-    }))
+      [name]: value,
+    }));
     // Clear error for this field
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ''
-      }))
+        [name]: "",
+      }));
     }
-  }
+  };
 
   const handleSubmit = async () => {
-    setIsLoading(true)
-    setGeneralError('')
-    setErrors({})
+    setIsLoading(true);
+    setGeneralError("");
+    setErrors({});
 
     // Validation
-    const newErrors: { [key: string]: string } = {}
+    const newErrors: { [key: string]: string } = {};
     if (!formData.username.trim()) {
-      newErrors.username = 'Username is required'
+      newErrors.username = "Username is required";
     }
     if (!formData.password.trim()) {
-      newErrors.password = 'Password is required'
+      newErrors.password = "Password is required";
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters'
+      newErrors.password = "Password must be at least 6 characters";
     }
 
     if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors)
-      setIsLoading(false)
-      return
+      setErrors(newErrors);
+      setIsLoading(false);
+      return;
     }
 
     try {
-      // TODO: Replace with your actual API endpoint
-      // const response = await fetch('/api/admin/users', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(formData)
-      // })
+      const response = await fetch("http://localhost:3001/admin/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.accessToken}`,
+        },
+        body: JSON.stringify({
+          username: formData.username,
+          password: formData.password,
+        }),
+      });
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to add admin user");
+      }
+
       // Add new admin to list
       const newAdmin = {
-        id: Date.now().toString(),
-        username: formData.username
-      }
-      setAdminUsers(prev => [...prev, newAdmin])
-      
-      console.log('New admin added:', formData)
-      alert('Admin user added successfully!')
-      
+        id: data.id || data._id,
+        username: data.username,
+      };
+      setAdminUsers((prev) => [...prev, newAdmin]);
+
+      alert("Admin user added successfully!");
+
       // Reset form
       setFormData({
-        username: '',
-        password: ''
-      })
-    } catch (error) {
-      setGeneralError('Failed to add admin user. Please try again.')
+        username: "",
+        password: "",
+      });
+    } catch (error: any) {
+      setGeneralError(error.message || "Failed to add admin user. Please try again.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleDelete = async (id: string, username: string) => {
     if (!confirm(`Are you sure you want to delete admin user "${username}"?`)) {
-      return
+      return;
     }
 
     try {
-      // TODO: Replace with your actual API endpoint
-      // const response = await fetch(`/api/admin/users/${id}`, {
-      //   method: 'DELETE'
-      // })
+      const response = await fetch(`http://localhost:3001/admin/delete/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${session?.accessToken}`,
+        },
+      });
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500))
-      
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to delete admin user");
+      }
+
       // Remove admin from list
-      setAdminUsers(prev => prev.filter(admin => admin.id !== id))
-      console.log('Admin deleted:', id)
-      alert('Admin user deleted successfully!')
-    } catch (error) {
-      alert('Failed to delete admin user. Please try again.')
+      setAdminUsers((prev) => prev.filter((admin) => admin.id !== id));
+      alert("Admin user deleted successfully!");
+    } catch (error: any) {
+      alert(error.message || "Failed to delete admin user. Please try again.");
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-secondary from-blue-50 to-indigo-100 p-8">
@@ -120,7 +185,9 @@ const ManageAdminUsers = () => {
             <Shield className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-black text-3xl font-bold">Manage Admin Users</h1>
-          <p className="text-gray-600 mt-2">Add new administrators and manage existing ones</p>
+          <p className="text-gray-600 mt-2">
+            Add new administrators and manage existing ones
+          </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -140,7 +207,10 @@ const ManageAdminUsers = () => {
 
             <div className="space-y-6">
               <div>
-                <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="username"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Username
                 </label>
                 <div className="relative">
@@ -154,7 +224,9 @@ const ManageAdminUsers = () => {
                     value={formData.username}
                     onChange={handleChange}
                     className={`block w-full pl-10 pr-3 py-2.5 border ${
-                      errors.username ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
+                      errors.username
+                        ? "border-red-300 focus:ring-red-500 focus:border-red-500"
+                        : "border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
                     } rounded-lg focus:outline-none focus:ring-2 transition-colors`}
                     placeholder="admin@example.com"
                   />
@@ -168,7 +240,10 @@ const ManageAdminUsers = () => {
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Password
                 </label>
                 <div className="relative">
@@ -182,7 +257,9 @@ const ManageAdminUsers = () => {
                     value={formData.password}
                     onChange={handleChange}
                     className={`block w-full pl-10 pr-3 py-2.5 border ${
-                      errors.password ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
+                      errors.password
+                        ? "border-red-300 focus:ring-red-500 focus:border-red-500"
+                        : "border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
                     } rounded-lg focus:outline-none focus:ring-2 transition-colors`}
                     placeholder="••••••••"
                   />
@@ -199,9 +276,16 @@ const ManageAdminUsers = () => {
                 type="button"
                 onClick={handleSubmit}
                 disabled={isLoading}
-                className="w-full bg-primary cursor-pointer text-white py-2.5 px-4 rounded-lg font-medium hover:bg-secondary hover:text-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-primary cursor-pointer text-white py-2.5 px-4 rounded-lg font-medium hover:bg-secondary hover:text-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                {isLoading ? 'Adding Admin...' : 'Add Admin User'}
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Adding Admin...
+                  </>
+                ) : (
+                  "Add Admin User"
+                )}
               </button>
             </div>
           </div>
@@ -217,7 +301,12 @@ const ManageAdminUsers = () => {
             </div>
 
             <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
-              {adminUsers.length === 0 ? (
+              {isFetchingAdmins ? (
+                <div className="text-center py-12">
+                  <Loader2 className="w-12 h-12 mx-auto mb-3 text-primary animate-spin" />
+                  <p className="text-gray-500">Loading admin users...</p>
+                </div>
+              ) : adminUsers.length === 0 ? (
                 <div className="text-center py-12 text-gray-500">
                   <User className="w-12 h-12 mx-auto mb-3 text-gray-400" />
                   <p>No admin users yet</p>
@@ -233,7 +322,9 @@ const ManageAdminUsers = () => {
                         <User className="w-5 h-5 text-white" />
                       </div>
                       <div>
-                        <p className="font-medium text-black">{admin.username}</p>
+                        <p className="font-medium text-black">
+                          {admin.username}
+                        </p>
                         <p className="text-sm text-gray-500">Administrator</p>
                       </div>
                     </div>
@@ -252,7 +343,7 @@ const ManageAdminUsers = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ManageAdminUsers
+export default ManageAdminUsers;

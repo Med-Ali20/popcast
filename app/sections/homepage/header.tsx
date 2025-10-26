@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
@@ -17,22 +17,40 @@ const Header = () => {
 
   return (
     <>
-      <header className="bg-primary text-secondary flex w-full items-center px-6 md:px-12 py-4 lg:py-2 sticky top-0 z-10 font-emirates">
-        <img src="/elements/08.png" className="w-[50px] md:w-[100px] mr-auto" alt="" />
-        
+      <header className="bg-primary text-secondary flex w-full items-center px-6 md:px-12 py-4 sticky top-0 z-100 font-emirates">
+        <a href="/" className="mr-auto">
+          <img
+            src="/images/PopCast Horizontal Logo.png"
+            className="w-[90px] md:w-[140px] "
+            alt=""
+          />
+        </a>
+
         {/* Desktop Menu */}
-        <ul className="flex items-center justify-around font-semibold text-xl hidden md:flex list-none">
+        <ul className="flex items-center justify-around font-semibold text-lg hidden md:flex list-none">
           <li className="mx-4">
-            <Link href="/contact" className="text-secondary no-underline"> التواصل </Link>
+            <Link href="/contact" className="text-secondary no-underline">
+              {" "}
+              التواصل{" "}
+            </Link>
           </li>
           <li className="mx-4">
-            <Link href="/articles" className="text-secondary no-underline"> المقالات </Link>
+            <Link href="/article" className="text-secondary no-underline">
+              {" "}
+              المقالات{" "}
+            </Link>
           </li>
           <li className="mx-4">
-            <Link href="/podcast" className="text-secondary no-underline"> البودكاست </Link>
+            <Link href="/podcast" className="text-secondary no-underline">
+              {" "}
+              البودكاست{" "}
+            </Link>
           </li>
           <li className="mr-4 ml-12">
-            <Link href="/"> <img src="/elements/26.png" className="w-[60px]" alt="" /> </Link>
+            <Link href="/">
+              {" "}
+              <img src="/elements/26.png" className="w-[60px]" alt="" />{" "}
+            </Link>
           </li>
         </ul>
 
@@ -48,16 +66,19 @@ const Header = () => {
 
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
-        <div 
+        <div
           className="fixed inset-0  bg-[rgba(0,0,0,0.5)] z-20 md:hidden"
           onClick={closeMenu}
         />
       )}
 
       {/* Mobile Menu */}
-      <div dir="rtl" className={`fixed top-0 right-0 h-full w-80 bg-primary text-secondary transform transition-transform duration-300 ease-in-out z-30 md:hidden ${
-        isMenuOpen ? 'translate-x-0' : 'translate-x-full'
-      }`}>
+      <div
+        dir="rtl"
+        className={`fixed top-0 z-300 right-0 h-full w-80 bg-primary text-secondary transform transition-transform duration-300 ease-in-out z-30 md:hidden ${
+          isMenuOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
         {/* Menu Header */}
         <div className="flex items-center justify-between p-6 border-b border-secondary/20">
           <img src="/elements/26.png" className="w-[50px]" alt="" />
@@ -72,29 +93,29 @@ const Header = () => {
 
         {/* Menu Items */}
         <nav className="flex flex-col p-6 space-y-6 font-emirates">
-          <Link 
-            href="/" 
+          <Link
+            href="/"
             className="text-secondary no-underline text-xl font-semibold py-2 border-b border-secondary/10"
             onClick={closeMenu}
           >
             الرئيسية
           </Link>
-          <Link 
-            href="/podcast" 
+          <Link
+            href="/podcast"
             className="text-secondary no-underline text-xl font-semibold py-2 border-b border-secondary/10"
             onClick={closeMenu}
           >
             البودكاست
           </Link>
-          <Link 
-            href="/articles" 
+          <Link
+            href="/article"
             className="text-secondary no-underline text-xl font-semibold py-2 border-b border-secondary/10"
             onClick={closeMenu}
           >
             المقالات
           </Link>
-          <Link 
-            href="/contact" 
+          <Link
+            href="/contact"
             className="text-secondary no-underline text-xl font-semibold py-2 border-b border-secondary/10"
             onClick={closeMenu}
           >

@@ -12,6 +12,8 @@
     "@icons-pack/react-simple-icons": "^13.7.0",
     "lucide-react": "^0.542.0",
     "next": "15.5.2",
+    "next-auth": "^4.24.11",
+    "nodemailer": "^6.10.1",
     "react": "19.1.0",
     "react-awesome-reveal": "^4.3.1",
     "react-dom": "19.1.0",
@@ -20,6 +22,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/nodemailer": "^7.0.3",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "tailwindcss": "^4",

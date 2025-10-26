@@ -39,7 +39,7 @@ const MusicMarquee = () => {
           >
             <Icon
               size={32}
-              className="text-primary opacity-50 hover:opacity-100 hover:scale-110 transition-all duration-300"
+              className="text-white opacity-75 hover:opacity-100 hover:scale-110 transition-all duration-300"
             />
             {/* <span className="text-primary opacity-40 hover:opacity-100 cursor-default">●</span> */}
           </div>

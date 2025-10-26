@@ -36,16 +36,16 @@ const Hero = () => {
   }, []);
 
   return (
-    <div className="w-full flex items-center justify-center mt-[7vw]">
+    <div className="w-full flex items-center justify-center md:mt-[7vw] lg:mt-[5vw]">
       <div className="w-[90%] md:w-[50%] mx-auto font-emirates relative">
         {/* Background that starts at 40% height on md+ screens */}
-        <div className="absolute inset-0 bg-[rgba(255,255,255,0.4)] rounded-lg lg:top-[27vw]"></div>
+        <div className="absolute inset-0 bg-[rgba(255,255,255,0.4)] rounded-lg top-[4vw] md:top-[10vw] lg:top-[15vw]"></div>
 
         {/* Content with relative positioning and padding */}
         <div className="relative flex flex-col p-8 md:pt-0">
           {/* Images container with fixed aspect ratio */}
           <Slide direction="up" cascade triggerOnce>
-            <div className="relative w-[70vw] z-20 md:w-[60vw] ml-[10%] -mr-[40%] md:-ml-[20%] lg:-ml-[15%] aspect-video min-h-[300px]">
+            <div className="relative w-[70vw] z-20 md:w-[53vw] ml-[10%] -mr-[40%] md:-ml-[10%] lg:-ml-[7%] aspect-video min-h-[300px]">
               {/* First two images with Zoom animation */}
               <Zoom triggerOnce delay={0}>
                 <img
@@ -95,16 +95,36 @@ const Hero = () => {
                 className="absolute w-3/5 left-[20%] top-[45%] md:w-2/5 md:left-[30%] md:top-[35%]"
               />
 
-              <img
-                src="/elements/10.png"
-                alt=""
-                className="absolute md:w-[35.6%] w-[58%] -left-[15%] md:left-[10%] top-[88%] md:top-[80%] md:left-[15%] md:top-[85%]"
-              />
-              <img
-                src="/elements/09.png"
-                alt=""
-                className="absolute w-3/5 -left-[15%] md:left-[10%] top-[80%] md:w-2/5 md:left-[15%] md:top-[75%]"
-              />
+              <div className="absolute w-3/5 -left-[15%] md:left-[10%] top-[80%] md:w-2/5 md:left-[15%] md:top-[75%]">
+                {/* --- TV container --- */}
+                <div
+                  className="absolute w-[70%] md:w-[67%] left-[2%] top-[22%] md:left-[2.5%] md:top-[22%] object-cover rounded-sm overflow-hidden"
+                  style={{
+                    transform: "rotateY(38deg) rotateX(12deg) rotateZ(8deg)",
+                    clipPath: "polygon(3% 5%, 97% 3%, 98% 95%, 2% 97%)",
+                  }}
+                >
+                  {/* Video overlay */}
+                  <video
+                    src="/images/video.mp4"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                {/* Cinematic bars (top + bottom) */}
+                <div className="absolute top-[18.2%] left-[10%] w-[80%] h-[8%] bg-black rotate-[9deg]"></div>
+                <div className="absolute bottom-[33.7%] left-[10%] w-[80%] h-[8%] bg-black rotate-[8.5deg]"></div>
+
+                {/* TV frame image (above video) */}
+                <img
+                  src="/elements/09.png"
+                  alt="TV"
+                  className="relative z-40 pointer-events-none"
+                />
+              </div>
 
               <img
                 src="/elements/08.png"
@@ -116,10 +136,10 @@ const Hero = () => {
 
           {/* Text content with top padding on md+ to account for background */}
           <Fade triggerOnce>
-            <div className="mt-[18vw] pt-[20%] md:pt-0">
+            <div className="mt-[16vw] pt-[20%] md:pt-0">
               <p
                 dir="rtl"
-                className="text-justify w-full text-secondary lg:text-3xl lg:leading-11 px-3"
+                className="text-justify w-full text-secondary lg:text-2xl lg:leading-9 px-3"
               >
                 <span className="font-bold">بـوب كاست</span> هو مساحة إبداعية
                 جديدة انطلقت عام 2025 كامتداد لمشروع ArabiaPop، لكن بروح مختلفة
@@ -137,7 +157,7 @@ const Hero = () => {
           <div className="w-full flex flex-col-reverse lg:flex-row lg:gap-10 text-right text-white mt-12">
             <div className="flex w-[100%] items-center a cursor-pointer shadow-2xl rounded-2xl py-4 lg:w-[50%] mt-6 lg:mt-0 pr-4">
               <div className="ml-auto">
-                <h3 className="text-2xl lg:text-4xl font-bold">اقرأ</h3>
+                <h3 className="text-2xl lg:text-2xl font-bold">اقرأ</h3>
                 <p className="text-lg">مقالات بوب كاست</p>
               </div>
               <img src="/elements/13.png" alt="" className="w-[70px] ml-5" />
@@ -155,7 +175,7 @@ const Hero = () => {
 
               {/* Content stays in place */}
               <div className="ml-auto relative ">
-                <h3 className="text-2xl lg:text-4xl font-bold">شاهد</h3>
+                <h3 className="text-2xl lg:text-2xl font-bold">شاهد</h3>
                 <p className="text-lg">محتوى بصري</p>
               </div>
               <div className="relative w-fit ml-5">
@@ -170,9 +190,9 @@ const Hero = () => {
                    bg-white rounded-full 
                    top-1/2 left-1/2 
                    -translate-x-1/2 -translate-y-1/2 `}
-                   style={{
-                    animation: eyeAnimationActive? 'float 2s' : 'none',
-                   }}
+                  style={{
+                    animation: eyeAnimationActive ? "float 2s" : "none",
+                  }}
                 ></span>
                 {/* Top eyelid - only animate when triggered */}
                 <span
@@ -180,9 +200,9 @@ const Hero = () => {
                    bg-white rounded-t-full 
                    md:top-[42%] md:left-1/2 top-[42%] left-[25%] origin-top hidden md:block
                    -translate-x-1/2 -translate-y-1/2 `}
-                   style={{
-                    animation: eyeAnimationActive? 'blink 1s 2s' : 'none',
-                   }}
+                  style={{
+                    animation: eyeAnimationActive ? "blink 1s 2s" : "none",
+                  }}
                 ></span>
                 {/* Bottom eyelid - only animate when triggered */}
                 <span
@@ -190,9 +210,9 @@ const Hero = () => {
                    bg-white rounded-t-full 
                    md:top-[86%] md:left-1/2 top-[86%] left-[25%] origin-top hidden md:block
                    -translate-x-1/2 -translate-y-1/2 rotate-180`}
-                   style={{
-                    animation: eyeAnimationActive? 'blink 1s 2s' : 'none',
-                   }}
+                  style={{
+                    animation: eyeAnimationActive ? "blink 1s 2s" : "none",
+                  }}
                 ></span>
               </div>
             </div>

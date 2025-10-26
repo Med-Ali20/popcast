@@ -1,7 +1,20 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Search, ChevronDown, ChevronLeft, ChevronRight, Play } from "lucide-react";
+import {
+  Search,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Play,
+  ArrowLeft,
+} from "lucide-react";
+import { useSearchParams, useRouter } from "next/navigation";
+
+interface Category {
+  _id: string;
+  name: string;
+}
 
 // @ts-ignore
 const GridBlock = ({ bgColor, title, description, onClick, thumbnailUrl }) => {
@@ -9,27 +22,25 @@ const GridBlock = ({ bgColor, title, description, onClick, thumbnailUrl }) => {
     <div
       dir="rtl"
       onClick={onClick}
-      className={`${thumbnailUrl ? '' : bgColor} relative overflow-hidden rounded-lg cursor-pointer group transition-transform duration-300 hover:scale-102`}
+      className={`${
+        thumbnailUrl ? "" : bgColor
+      } min-h-[300px] relative overflow-hidden rounded-lg cursor-pointer group transition-transform duration-300 hover:scale-102`}
     >
-      {/* Thumbnail image if available */}
       {thumbnailUrl && (
-        <img 
-          src={thumbnailUrl} 
+        <img
+          src={thumbnailUrl}
           alt={title}
           className="absolute inset-0 w-full h-full object-cover"
         />
       )}
 
-      {/* Play icon - appears on hover */}
       <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-75 group-hover:scale-100">
         <div className="bg-white/20 backdrop-blur-sm rounded-full p-4 mb-8 border border-white/30">
           <Play className="w-8 h-8 text-white fill-white z-10 block" />
         </div>
       </div>
 
-      {/* Content at bottom with gradient background */}
       <div className="absolute bottom-0 left-0 right-0">
-        {/* Gradient background for text */}
         <div className="bg-gradient-to-t from-black/60 via-black/30 to-transparent p-6 text-white">
           <div className="transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
             <h3 className="text-xl font-bold mb-2 drop-shadow-lg">{title}</h3>
@@ -48,46 +59,40 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   const generatePageNumbers = () => {
     const pages = [];
     const showEllipsis = totalPages > 7;
-    
+
     if (!showEllipsis) {
-      // Show all pages if 7 or fewer
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
       }
     } else {
-      // Show smart pagination with ellipsis
       if (currentPage <= 4) {
-        // Show: 1 2 3 4 5 ... last
         for (let i = 1; i <= 5; i++) {
           pages.push(i);
         }
-        pages.push('...');
+        pages.push("...");
         pages.push(totalPages);
       } else if (currentPage >= totalPages - 3) {
-        // Show: 1 ... last-4 last-3 last-2 last-1 last
         pages.push(1);
-        pages.push('...');
+        pages.push("...");
         for (let i = totalPages - 4; i <= totalPages; i++) {
           pages.push(i);
         }
       } else {
-        // Show: 1 ... current-1 current current+1 ... last
         pages.push(1);
-        pages.push('...');
+        pages.push("...");
         for (let i = currentPage - 1; i <= currentPage + 1; i++) {
           pages.push(i);
         }
-        pages.push('...');
+        pages.push("...");
         pages.push(totalPages);
       }
     }
-    
+
     return pages;
   };
 
   return (
     <div className="flex justify-center items-center gap-2 mt-8">
-      {/* Previous button */}
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
@@ -97,11 +102,10 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         السابق
       </button>
 
-      {/* Page numbers */}
       <div className="flex gap-1">
         {generatePageNumbers().map((page, index) => (
           <React.Fragment key={index}>
-            {page === '...' ? (
+            {page === "..." ? (
               <span className="px-3 py-2 text-sm font-medium text-gray-500">
                 ...
               </span>
@@ -110,8 +114,8 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                 onClick={() => onPageChange(page)}
                 className={`px-3 py-2 cursor-pointer text-sm font-medium rounded-lg transition-colors ${
                   currentPage === page
-                    ? 'text-blue-600 bg-blue-50 border border-blue-300'
-                    : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                    ? "text-blue-600 bg-blue-50 border border-blue-300"
+                    : "text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700"
                 }`}
               >
                 {page}
@@ -121,7 +125,6 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         ))}
       </div>
 
-      {/* Next button */}
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
@@ -135,23 +138,49 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 };
 
 const PodcastPage = () => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  // const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [podcasts, setPodcasts] = useState([]);
-  // const [categories, setCategories] = useState(["All Categories"]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
     totalPodcasts: 0,
     hasNextPage: false,
     hasPreviousPage: false,
-    limit: 6
+    limit: 6,
   });
   const [isLoading, setIsLoading] = useState(false);
+  const params = useSearchParams();
+  const router = useRouter();
+  const tags = params.get("tags");
+  const categoryParam = params.get("category");
 
-  // Fetch podcasts from server
+  // Fetch categories on mount
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  // Set category from URL parameter
+  useEffect(() => {
+    if (categoryParam) {
+      setSelectedCategory(categoryParam);
+    }
+  }, [categoryParam]);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch("http://localhost:3001/category");
+      if (response.ok) {
+        const data = await response.json();
+        setCategories(data);
+      }
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
+
   const fetchPodcasts = async (page: number, search = "", category = "") => {
     setIsLoading(true);
     try {
@@ -164,7 +193,7 @@ const PodcastPage = () => {
         params.append("search", search);
       }
 
-      if (category && category !== "All Categories") {
+      if (category) {
         params.append("category", category);
       }
 
@@ -172,55 +201,47 @@ const PodcastPage = () => {
       const data = await response.json();
 
       setPodcasts(data.podcasts || []);
-      console.log('searched data:', data);
+      console.log("searched data:", data);
       setPagination(data.pagination);
     } catch (error) {
-      console.error('Error fetching podcasts:', error);
+      console.error("Error fetching podcasts:", error);
       setPodcasts([]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Fetch categories from server
-  // const fetchCategories = async () => {
-  //   try {
-  //     const response = await fetch('http://localhost:3001/podcast/categories');
-  //     const data = await response.json();
-  //     setCategories(["All Categories", ...data.categories]);
-  //   } catch (error) {
-  //     console.error('Error fetching categories:', error);
-  //   }
-  // };
-
-  // Fetch categories on mount
-  // useEffect(() => {
-  //   fetchCategories();
-  // }, []);
-
-  // Fetch podcasts on mount and when filters change
   useEffect(() => {
-    fetchPodcasts(currentPage, searchQuery);
-  }, [currentPage, searchQuery]);
+    fetchPodcasts(currentPage, tags ?? searchQuery, selectedCategory);
+  }, [currentPage, searchQuery, selectedCategory]);
 
-  // const handleCategorySelect = (category: string) => {
-  //   setSelectedCategory(category);
-  //   setIsDropdownOpen(false);
-  //   setCurrentPage(1); // Reset to page 1 when category changes
-  // };
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const category = e.target.value;
+    setSelectedCategory(category);
+    setCurrentPage(1);
+
+    // Update URL
+    const newParams = new URLSearchParams(params.toString());
+    if (category) {
+      newParams.set("category", category);
+    } else {
+      newParams.delete("category");
+    }
+    router.push(`/podcast?${newParams.toString()}`);
+  };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
-    setCurrentPage(1); // Reset to page 1 when searching
+    console.log("podcast state: ", podcasts);
+    setCurrentPage(1);
   };
 
   const handlePodcastClick = (podcast: any) => {
-    // Navigate to podcast detail page
     window.location.href = `/podcast/${podcast._id}`;
   };
 
@@ -228,6 +249,30 @@ const PodcastPage = () => {
     <main className="bg-gray-100 min-h-screen">
       {/* Search and Filter Bar */}
       <div className="relative w-full h-[70px] pr-8 md:pr-0 justify-center bg-gray-300 py-6 flex flex-row-reverse gap-5 items-center">
+        {/* Category Filter */}
+        <div className="relative w-fit">
+          <select
+            value={selectedCategory}
+            onChange={handleCategoryChange}
+            className="h-[40px] px-4 pr-10 bg-white border border-gray-300 appearance-none rounded-full focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 cursor-pointer text-sm"
+            dir="rtl"
+          >
+            <option value="">كل التصنيفات</option>
+            {categories.map((cat) => (
+              <option key={cat._id} value={cat._id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+
+          {/* Lucide arrow icon */}
+          <ChevronDown
+            className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500"
+            size={18}
+          />
+        </div>
+
+        {/* Search Input */}
         <div className="relative">
           <input
             type="text"
@@ -239,44 +284,31 @@ const PodcastPage = () => {
           />
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
         </div>
-     
       </div>
-      
-      {/* Featured Section */}
-      {/* <section className="grid grid-cols-1 w-full md:grid-cols-2 h-[800px] md:h-[600px] gap-4 max-w-[1100px] mx-auto py-10 px-5">
-        <GridBlock
-          bgColor="bg-blue-500"
-          title="البودكاست المميز"
-          description="اكتشف أحدث الحلقات المميزة التي تقدم محتوى قيم وملهم"
-          onClick={() => {}}
-        />
-        <GridBlock
-          bgColor="bg-yellow-500 md:row-span-2"
-          title="تصميم إبداعي"
-          description="استكشف تصاميم مذهلة تجذب الانتباه وتحقق النتائج"
-          onClick={() => {}}
-        />
-        <GridBlock
-          bgColor="bg-purple-500"
-          title="هوية العلامة التجارية"
-          description="قم ببناء حضور قوي للعلامة التجارية من خلال حلول الهوية الشاملة"
-          onClick={() => {}}
-        />
-      </section> */}
 
       {/* Podcasts Grid Section */}
       <section>
+        <ArrowLeft
+          className="text-primary m-5 cursor-pointer"
+          onClick={() => router.back()}
+        />
+
         <div className="max-w-[1100px] mx-auto py-5 px-5">
           {/* Pagination info */}
           <div className="flex justify-between items-center mb-6">
             <div className="text-sm text-gray-700">
-              عرض {((pagination.currentPage - 1) * pagination.limit) + 1} - {Math.min(pagination.currentPage * pagination.limit, pagination.totalPodcasts)} من {pagination.totalPodcasts} عنصر
+              عرض {(pagination.currentPage - 1) * pagination.limit + 1} -{" "}
+              {Math.min(
+                pagination.currentPage * pagination.limit,
+                pagination.totalPodcasts
+              )}{" "}
+              من {pagination.totalPodcasts} عنصر
             </div>
             <div className="text-sm text-gray-700">
               الصفحة {pagination.currentPage} من {pagination.totalPages}
             </div>
           </div>
-          
+
           {/* Grid items */}
           {isLoading ? (
             <div className="flex justify-center items-center h-64">
@@ -303,7 +335,7 @@ const PodcastPage = () => {
               ))}
             </div>
           )}
-          
+
           {/* Pagination component */}
           {!isLoading && podcasts.length > 0 && (
             <Pagination

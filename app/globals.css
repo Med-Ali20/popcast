@@ -33,10 +33,13 @@
   font-family: var(--font-emirates), sans-serif;
 }
 
+
 body {
-  background-image: url('/elements/11.png');
+  background-image: url("/elements/11.png");
   background-position: center;
   background-size: 100% 100%;
-  overflow-x: hidden;
+  /* overflow-x: hidden; */
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
-

@@ -259,7 +259,7 @@ const ArticlesPage: React.FC = () => {
       }
 
       const baseUrl =
-        process.env.NEXT_PUBLIC_API_URL || "http://3.70.229.133:3001";
+        process.env.NEXT_PUBLIC_API_URL || "https://server.itspopcast.com";
 
       const response = await fetch(`${baseUrl}/article?${params}`);
       const data = await response.json();

@@ -52,7 +52,7 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch("http://3.70.229.133:3001/category?type=podcast");
+      const response = await fetch("https://server.itspopcast.com/category?type=podcast");
       if (response.ok) {
         const data = await response.json();
         setCategories(data);
@@ -74,7 +74,7 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
     setIsDeleting(true);
     try {
       const response = await fetch(
-        `http://3.70.229.133:3001/podcast/${podcast._id}`,
+        `https://server.itspopcast.com/podcast/${podcast._id}`,
         {
           method: "DELETE",
           headers: {
@@ -116,7 +116,7 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
       }
 
       const response = await fetch(
-        `http://3.70.229.133:3001/podcast/${podcast._id}`,
+        `https://server.itspopcast.com/podcast/${podcast._id}`,
         {
           method: "PATCH",
           headers: {
@@ -145,7 +145,7 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
   const youtubeVideoId = getYouTubeVideoId(podcast.youtube);
 
   return (
-    <main className="flex flex-col items-center bg-gray-50 min-h-screen">
+    <main className="flex flex-col items-center bg-gray-50 overflow-x-hidden min-h-screen">
       {/* Hero Section with Thumbnail */}
       <section className="w-screen flex flex-col h-[400px] overflow-y-hidden relative">
         <img
@@ -168,7 +168,7 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
       <section className="bg-gray-50 relative w-full py-8 max-w-[1100px] px-4">
         {/* Back Button */}
         <ArrowLeft
-          className="text-blue-600 absolute left-4 lg:-left-[10%] top-[10%] cursor-pointer hover:text-blue-700 transition"
+          className="text-primary absolute left-4 lg:-left-[10%] top-[25px] cursor-pointer transition"
           onClick={() => router.back()}
         />
         

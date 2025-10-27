@@ -132,7 +132,7 @@ const ArticleUpload: React.FC = () => {
         data.append("thumbnail", thumbnailFile);
       }
 
-      const response = await fetch("http://3.70.229.133:3001/article", {
+      const response = await fetch("https://server.itspopcast.com/article", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${session?.accessToken}`,

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -26,7 +26,9 @@ const ArticleDetailPage = ({ initialArticle }: ArticleDetailPageProps) => {
     content: initialArticle.content || "",
     author: initialArticle.author || "",
     category: initialArticle.category || "",
-    tags: Array.isArray(initialArticle.tags) ? initialArticle.tags.join(", ") : "",
+    tags: Array.isArray(initialArticle.tags)
+      ? initialArticle.tags.join(", ")
+      : "",
   });
 
   const isUserAdmin = isAdmin(session);
@@ -35,7 +37,7 @@ const ArticleDetailPage = ({ initialArticle }: ArticleDetailPageProps) => {
     setIsDeleting(true);
     try {
       const response = await fetch(
-        `http://3.70.229.133:3001/article/${article._id}`,
+        `https://server.itspopcast.com/article/${article._id}`,
         {
           method: "DELETE",
           headers: {
@@ -68,11 +70,13 @@ const ArticleDetailPage = ({ initialArticle }: ArticleDetailPageProps) => {
       };
 
       if (editForm.tags.trim()) {
-        updateData.tags = editForm.tags.split(",").map((tag: any) => tag.trim());
+        updateData.tags = editForm.tags
+          .split(",")
+          .map((tag: any) => tag.trim());
       }
 
       const response = await fetch(
-        `http://3.70.229.133:3001/article/${article._id}`,
+        `https://server.itspopcast.com/article/${article._id}`,
         {
           method: "PATCH",
           headers: {
@@ -103,7 +107,7 @@ const ArticleDetailPage = ({ initialArticle }: ArticleDetailPageProps) => {
   ) => {
     try {
       const response = await fetch(
-        `http://3.70.229.133:3001/article/${article._id}/status`,
+        `https://server.itspopcast.com/article/${article._id}/status`,
         {
           method: "PATCH",
           headers: {
@@ -136,7 +140,7 @@ const ArticleDetailPage = ({ initialArticle }: ArticleDetailPageProps) => {
   };
 
   return (
-    <main className="flex flex-col items-center bg-secondary font-emirates min-h-screen">
+    <main className="flex flex-col items-center bg-secondary font-emirates overflow-x-hidden min-h-screen">
       <section className="w-screen flex flex-col h-[400px] overflow-y-hidden relative">
         <img
           src={article.thumbnail || "/images/article.jpg"}
@@ -156,7 +160,7 @@ const ArticleDetailPage = ({ initialArticle }: ArticleDetailPageProps) => {
 
       <section className="bg-secondary w-full relative py-8 max-w-[1100px] px-4">
         <ArrowLeft
-          className="text-primary absolute left-4 lg:-left-[10%] top-[10%] cursor-pointer"
+          className="text-primary absolute left-4 lg:-left-[10%] top-[25px] cursor-pointer transition"
           onClick={() => router.back()}
         />
 

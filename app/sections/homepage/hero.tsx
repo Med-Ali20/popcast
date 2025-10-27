@@ -139,7 +139,7 @@ const Hero = () => {
             <div className="mt-[16vw] pt-[20%] md:pt-0">
               <p
                 dir="rtl"
-                className="text-justify w-full text-secondary lg:text-2xl lg:leading-9 px-3"
+                className="text-justify w-full text-secondary lg:text-lg lg:leading-8 px-3"
               >
                 <span className="font-bold">بـوب كاست</span> هو مساحة إبداعية
                 جديدة انطلقت عام 2025 كامتداد لمشروع ArabiaPop، لكن بروح مختلفة

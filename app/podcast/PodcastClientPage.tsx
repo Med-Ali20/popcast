@@ -173,7 +173,7 @@ const PodcastPage = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch("http://3.70.229.133:3001/category");
+      const response = await fetch("https://server.itspopcast.com/category");
       if (response.ok) {
         const data = await response.json();
         setCategories(data);
@@ -199,7 +199,7 @@ const PodcastPage = () => {
         params.append("category", category);
       }
 
-      const response = await fetch(`http://3.70.229.133:3001/podcast?${params}`);
+      const response = await fetch(`https://server.itspopcast.com/podcast?${params}`);
       const data = await response.json();
 
       setPodcasts(data.podcasts || []);

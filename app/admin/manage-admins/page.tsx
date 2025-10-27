@@ -47,7 +47,7 @@ const ManageAdminUsers = () => {
   const fetchAdminUsers = async () => {
     setIsFetchingAdmins(true);
     try {
-      const response = await fetch("http://3.70.229.133:3001/admin", {
+      const response = await fetch("https://server.itspopcast.com/admin", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${session?.accessToken}`,
@@ -111,7 +111,7 @@ const ManageAdminUsers = () => {
     }
 
     try {
-      const response = await fetch("http://3.70.229.133:3001/admin/register", {
+      const response = await fetch("https://server.itspopcast.com/admin/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -156,7 +156,7 @@ const ManageAdminUsers = () => {
     }
 
     try {
-      const response = await fetch(`http://3.70.229.133:3001/admin/delete/${id}`, {
+      const response = await fetch(`https://server.itspopcast.com/admin/delete/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${session?.accessToken}`,

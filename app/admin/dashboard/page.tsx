@@ -84,7 +84,7 @@ const Dashboard = () => {
 
     try {
       // TODO: Replace with your actual API endpoint
-      const response = await fetch("http://3.70.229.133:3001/admin/change-password", {
+      const response = await fetch("https://server.itspopcast.com/admin/change-password", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

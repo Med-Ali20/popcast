@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Share2 } from "lucide-react";
 import { isAdmin } from "@/app/utils/auth";
 
 interface Category {
@@ -27,6 +27,10 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [recentArticles, setRecentArticles] = useState([]);
+  const [recentPodcasts, setRecentPodcasts] = useState([]);
+  const [showShareMenu, setShowShareMenu] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
 
   const [editForm, setEditForm] = useState({
     title: initialPodcast.title || "",
@@ -43,22 +47,75 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
 
   const isUserAdmin = isAdmin(session);
 
-  // Fetch categories when edit modal opens
+  useEffect(() => {
+    fetchRecentContent();
+  }, []);
+
   useEffect(() => {
     if (showEditModal) {
       fetchCategories();
     }
   }, [showEditModal]);
 
+  const fetchRecentContent = async () => {
+    try {
+      const articlesRes = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/article?limit=3&sort=-date`
+      );
+      if (articlesRes.ok) {
+        const articlesData = await articlesRes.json();
+        setRecentArticles(articlesData.articles || []);
+      }
+
+      const podcastsRes = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/podcast?limit=3&sort=-createdAt`
+      );
+      if (podcastsRes.ok) {
+        const podcastsData = await podcastsRes.json();
+        setRecentPodcasts(podcastsData.podcasts || []);
+      }
+    } catch (error) {
+      console.error("Error fetching recent content:", error);
+    }
+  };
+
   const fetchCategories = async () => {
     try {
-      const response = await fetch("https://server.itspopcast.com/category?type=podcast");
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/category?type=podcast`)
       if (response.ok) {
         const data = await response.json();
         setCategories(data);
       }
     } catch (error) {
       console.error("Error fetching categories:", error);
+    }
+  };
+
+  const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const shareTitle = podcast.title;
+
+  const handleShare = (platform: string) => {
+    let url = '';
+    
+    switch(platform) {
+      case 'facebook':
+        url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+        break;
+      case 'twitter':
+        url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareTitle)}`;
+        break;
+      case 'linkedin':
+        url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
+        break;
+      case 'copy':
+        navigator.clipboard.writeText(shareUrl);
+        setCopySuccess(true);
+        setTimeout(() => setCopySuccess(false), 2000);
+        return;
+    }
+    
+    if (url) {
+      window.open(url, '_blank', 'width=600,height=400');
     }
   };
 
@@ -74,7 +131,7 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
     setIsDeleting(true);
     try {
       const response = await fetch(
-        `https://server.itspopcast.com/podcast/${podcast._id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/podcast/${podcast._id}`,
         {
           method: "DELETE",
           headers: {
@@ -97,56 +154,22 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
   };
 
   const handleUpdate = async () => {
-    setIsUpdating(true);
-    try {
-      const updateData: any = {
-        title: editForm.title,
-        description: editForm.description,
-        category: editForm.category || undefined,
-        spotify: editForm.spotify || undefined,
-        appleMusic: editForm.appleMusic || undefined,
-        anghami: editForm.anghami || undefined,
-        youtube: editForm.youtube || undefined,
-        audioUrl: editForm.audioUrl || undefined,
-        videoUrl: editForm.videoUrl || undefined,
-      };
+   router.push(`/podcast/edit/${podcast._id}`);
+  };
 
-      if (editForm.tags.trim()) {
-        updateData.tags = editForm.tags.split(",").map((tag: any) => tag.trim());
-      }
-
-      const response = await fetch(
-        `https://server.itspopcast.com/podcast/${podcast._id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session?.accessToken}`,
-          },
-          body: JSON.stringify(updateData),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("فشل في تحديث البودكاست");
-      }
-
-      const updatedPodcast = await response.json();
-      setPodcast(updatedPodcast);
-      setShowEditModal(false);
-      window.location.reload();
-    } catch (err: any) {
-      alert(err.message || "فشل في تحديث البودكاست");
-    } finally {
-      setIsUpdating(false);
-    }
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("ar-EG", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
   };
 
   const youtubeVideoId = getYouTubeVideoId(podcast.youtube);
 
   return (
     <main className="flex flex-col items-center bg-gray-50 overflow-x-hidden min-h-screen">
-      {/* Hero Section with Thumbnail */}
       <section className="w-screen flex flex-col h-[400px] overflow-y-hidden relative">
         <img
           src={podcast.thumbnailUrl || "/images/podcast.jpg"}
@@ -158,193 +181,301 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
 
         <h1
           dir="rtl"
-          className="font-bold text-4xl text-right absolute bottom-4 right-[13%] text-white z-10 max-w-[1100px] drop-shadow-lg"
+          className="font-bold text-4xl text-right absolute bottom-4 right-4 md:right-[3%] text-white z-10 max-w-[1100px] drop-shadow-lg px-4"
         >
           {podcast.title}
         </h1>
       </section>
 
-      {/* Main Content Section */}
-      <section className="bg-gray-50 relative w-full py-8 max-w-[1100px] px-4">
-        {/* Back Button */}
-        <ArrowLeft
-          className="text-primary absolute left-4 lg:-left-[10%] top-[25px] cursor-pointer transition"
-          onClick={() => router.back()}
-        />
-        
-        {/* Admin Controls */}
-        {isUserAdmin && (
-          <div
-            dir="rtl"
-            className="mb-6 p-4 bg-white rounded-lg border border-gray-300 shadow-sm"
-          >
-            <div className="flex flex-wrap w-full justify-center gap-3">
-              <button
-                onClick={() => setShowEditModal(true)}
-                className="px-4 py-2 bg-gray-600 cursor-pointer text-white rounded-lg hover:opacity-80 transition"
-              >
-                تعديل البودكاست
-              </button>
-              <button
-                onClick={() => setShowDeleteModal(true)}
-                className="px-4 py-2 bg-red-600 cursor-pointer text-white rounded-lg hover:bg-red-700 transition"
-              >
-                حذف البودكاست
-              </button>
-            </div>
-          </div>
-        )}
+      <div className="w-full max-w-[1400px] flex flex-col lg:flex-row-reverse gap-8 px-4 py-8">
+        <section className="flex-1 lg:flex lg:flex-col bg-gray-50 relative">
+          <ArrowLeft
+            className="text-primary mb-4 cursor-pointer transition hover:opacity-70"
+            onClick={() => router.back()}
+          />
 
-        {/* Description */}
-        {podcast.description && (
-          <h2 dir="rtl" className="text-right text-xl mb-6 text-gray-800 leading-relaxed">
-            {podcast.description}
-          </h2>
-        )}
-
-        {/* Tags */}
-        {podcast.tags && podcast.tags.length > 0 && (
-          <div dir="rtl" className="flex flex-wrap gap-2 mb-6">
-            {podcast.tags.map((tag: string, index: number) => (
-              <a href={`/podcast?tags=${tag}`} key={index}>
-                <span className="px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm hover:bg-gray-300 transition cursor-pointer">
-                  #{tag}
-                </span>
-              </a>
-            ))}
-          </div>
-        )}
-
-        {/* Category */}
-        {podcast.category && (
-          <div dir="rtl" className="mb-6">
-            <span className="text-sm text-gray-600">التصنيف: </span>
-            <a 
-              href={`/podcast?category=${podcast.category._id}`}
-              className="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer transition"
+          {isUserAdmin && (
+            <div
+              dir="rtl"
+              className="mb-6 p-4 bg-white rounded-lg border border-gray-300 shadow-sm"
             >
-              {podcast.category.name}
-            </a>
-          </div>
-        )}
+              <div className="flex flex-wrap w-full justify-center gap-3">
+                <button
+                  onClick={() => handleUpdate()}
+                  className="px-4 py-2 bg-gray-600 cursor-pointer text-white rounded-lg hover:opacity-80 transition"
+                >
+                  تعديل البودكاست
+                </button>
+                <button
+                  onClick={() => setShowDeleteModal(true)}
+                  className="px-4 py-2 bg-red-600 cursor-pointer text-white rounded-lg hover:bg-red-700 transition"
+                >
+                  حذف البودكاست
+                </button>
+              </div>
+            </div>
+          )}
 
-        {/* YouTube Video Embed */}
-        {youtubeVideoId && (
-          <div className="mb-8">
-            <h3 dir="rtl" className="mb-3 text-lg font-semibold text-gray-800">
-              شاهد على يوتيوب:
+          <div className="relative inline-block mb-6 ml-auto">
+            <button
+              onClick={() => setShowShareMenu(!showShareMenu)}
+              className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg cursor-pointer transition"
+            >
+              <Share2 className="w-4 h-4" />
+              <span>مشاركة</span>
+            </button>
+
+            {showShareMenu && (
+              <div className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-lg border border-gray-200 p-2 z-20 min-w-[200px]">
+                <button
+                  onClick={() => handleShare('facebook')}
+                  className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition text-right"
+                >
+                  <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                  </svg>
+                  <span>فيسبوك</span>
+                </button>
+                <button
+                  onClick={() => handleShare('twitter')}
+                  className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition text-right"
+                >
+                  <svg className="w-5 h-5 text-sky-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                  </svg>
+                  <span>تويتر</span>
+                </button>
+                <button
+                  onClick={() => handleShare('linkedin')}
+                  className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition text-right"
+                >
+                  <svg className="w-5 h-5 text-blue-700" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                  </svg>
+                  <span>لينكد إن</span>
+                </button>
+                <button
+                  onClick={() => handleShare('copy')}
+                  className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition text-right"
+                >
+                  <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                  </svg>
+                  <span>{copySuccess ? 'تم النسخ!' : 'نسخ الرابط'}</span>
+                </button>
+              </div>
+            )}
+          </div>
+        
+          
+
+          {podcast.description && (
+            <h2 dir="rtl" className="text-right text-xl mb-6 text-gray-800 leading-relaxed">
+              {podcast.description}
+            </h2>
+          )}
+
+          {podcast.tags && podcast.tags.length > 0 && (
+            <div dir="rtl" className="flex flex-wrap gap-2 mb-6">
+              {podcast.tags.map((tag: string, index: number) => (
+                <a href={`/podcast?tags=${tag}`} key={index}>
+                  <span className="px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm hover:bg-gray-300 transition cursor-pointer">
+                    #{tag}
+                  </span>
+                </a>
+              ))}
+            </div>
+          )}
+
+          {podcast.category && (
+            <div dir="rtl" className="mb-6">
+              <span className="text-sm text-gray-600">التصنيف: </span>
+              <a 
+                href={`/podcast?category=${podcast.category._id}`}
+                className="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer transition"
+              >
+                {podcast.category.name}
+              </a>
+            </div>
+          )}
+
+          {youtubeVideoId && (
+            <div className="mb-8">
+              <h3 dir="rtl" className="mb-3 text-lg font-semibold text-gray-800">
+                شاهد على يوتيوب:
+              </h3>
+              <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+                <iframe
+                  className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
+                  src={`https://www.youtube.com/embed/${youtubeVideoId}`}
+                  title="YouTube video player"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
+            </div>
+          )}
+
+          {(podcast.spotify || podcast.appleMusic || podcast.anghami) && (
+            <>
+              <h3 dir="rtl" className="mt-4 mb-3 text-lg font-semibold text-gray-800">
+                استمع على:
+              </h3>
+              <div className="flex flex-wrap gap-6 justify-end p-5">
+                {podcast.spotify && (
+                  <a
+                    href={podcast.spotify}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-green-600 hover:text-green-700 transition-all transform hover:scale-110"
+                    title="Spotify"
+                  >
+                    <img
+                      src="https://cdnjs.cloudflare.com/ajax/libs/simple-icons/9.21.0/spotify.svg"
+                      alt="Spotify"
+                      className="w-10 h-10"
+                      style={{
+                        filter:
+                          "invert(30%) sepia(99%) saturate(2000%) hue-rotate(95deg) brightness(108%) contrast(101%)",
+                      }}
+                    />
+                  </a>
+                )}
+
+                {podcast.appleMusic && (
+                  <a
+                    href={podcast.appleMusic}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-gray-800 hover:text-gray-900 transition-all transform hover:scale-110"
+                    title="Apple Music"
+                  >
+                    <img
+                      src="https://cdnjs.cloudflare.com/ajax/libs/simple-icons/9.21.0/applemusic.svg"
+                      alt="Apple Music"
+                      className="w-10 h-10"
+                      style={{
+                        filter:
+                          "invert(20%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%)",
+                      }}
+                    />
+                  </a>
+                )}
+
+                {podcast.anghami && (
+                  <a
+                    href={podcast.anghami}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-purple-600 hover:text-purple-700 transition-all transform hover:scale-110"
+                    title="Anghami"
+                  >
+                    <img
+                      src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Anghami_Icon.png"
+                      alt="Anghami"
+                      className="w-10 h-10"
+                      style={{
+                        filter:
+                          "invert(35%) sepia(99%) saturate(2000%) hue-rotate(260deg) brightness(108%) contrast(101%)",
+                      }}
+                    />
+                  </a>
+                )}
+              </div>
+            </>
+          )}
+
+          {podcast.audioUrl && (
+            <div className="mt-8">
+              <h3 dir="rtl" className="mb-3 text-lg font-semibold text-gray-800">
+                استمع الآن:
+              </h3>
+              <audio controls className="w-full rounded-lg shadow-sm">
+                <source src={podcast.audioUrl} type="audio/mpeg" />
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+          )}
+
+          {podcast.videoUrl && (
+            <div className="mt-8">
+              <h3 dir="rtl" className="mb-3 text-lg font-semibold text-gray-800">
+                شاهد الآن:
+              </h3>
+              <video controls className="w-full rounded-lg shadow-lg">
+                <source src={podcast.videoUrl} type="video/mp4" />
+                Your browser does not support the video element.
+              </video>
+            </div>
+          )}
+        </section>
+
+        <aside className="lg:w-80 space-y-6">
+          <div className="bg-white rounded-lg shadow-md p-4">
+            <h3 className="text-lg font-bold mb-4 text-right" dir="rtl">
+              أحدث المقالات
             </h3>
-            <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
-              <iframe
-                className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
-                src={`https://www.youtube.com/embed/${youtubeVideoId}`}
-                title="YouTube video player"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
+            <div className="space-y-3">
+              {recentArticles.map((item: any) => (
+                <a
+                  key={item._id}
+                  href={`/article/${item._id}`}
+                  className="block group"
+                >
+                  <div className="flex gap-3 items-start" dir="rtl">
+                    <img
+                      src={item.thumbnail || "/images/article.jpg"}
+                      alt={item.title}
+                      className="w-20 h-20 object-cover rounded-lg"
+                    />
+                    <div className="flex-1">
+                      <h4 className="text-sm font-semibold text-gray-800 group-hover:text-red-600 transition line-clamp-2">
+                        {item.title}
+                      </h4>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {formatDate(item.date)}
+                      </p>
+                    </div>
+                  </div>
+                </a>
+              ))}
             </div>
           </div>
-        )}
 
-        {/* Platform Links (Spotify, Apple Music, Anghami) */}
-        {(podcast.spotify || podcast.appleMusic || podcast.anghami) && (
-          <>
-            <h3 dir="rtl" className="mt-4 mb-3 text-lg font-semibold text-gray-800">
-              استمع على:
+          <div className="bg-white rounded-lg shadow-md p-4">
+            <h3 className="text-lg font-bold mb-4 text-right" dir="rtl">
+              أحدث البودكاست
             </h3>
-            <div className="flex flex-wrap gap-6 justify-end p-5">
-              {podcast.spotify && (
+            <div className="space-y-3">
+              {recentPodcasts.map((item: any) => (
                 <a
-                  href={podcast.spotify}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-green-600 hover:text-green-700 transition-all transform hover:scale-110"
-                  title="Spotify"
+                  key={item._id}
+                  href={`/podcast/${item._id}`}
+                  className="block group"
                 >
-                  <img
-                    src="https://cdnjs.cloudflare.com/ajax/libs/simple-icons/9.21.0/spotify.svg"
-                    alt="Spotify"
-                    className="w-10 h-10"
-                    style={{
-                      filter:
-                        "invert(30%) sepia(99%) saturate(2000%) hue-rotate(95deg) brightness(108%) contrast(101%)",
-                    }}
-                  />
+                  <div className="flex gap-3 items-start" dir="rtl">
+                    <img
+                      src={item.thumbnailUrl || "/images/podcast.jpg"}
+                      alt={item.title}
+                      className="w-20 h-20 object-cover rounded-lg"
+                    />
+                    <div className="flex-1">
+                      <h4 className="text-sm font-semibold text-gray-800 group-hover:text-red-600 transition line-clamp-2">
+                        {item.title}
+                      </h4>
+                      <p className="text-xs text-gray-500 mt-1 line-clamp-1">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
                 </a>
-              )}
-
-              {podcast.appleMusic && (
-                <a
-                  href={podcast.appleMusic}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-gray-800 hover:text-gray-900 transition-all transform hover:scale-110"
-                  title="Apple Music"
-                >
-                  <img
-                    src="https://cdnjs.cloudflare.com/ajax/libs/simple-icons/9.21.0/applemusic.svg"
-                    alt="Apple Music"
-                    className="w-10 h-10"
-                    style={{
-                      filter:
-                        "invert(20%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%)",
-                    }}
-                  />
-                </a>
-              )}
-
-              {podcast.anghami && (
-                <a
-                  href={podcast.anghami}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-purple-600 hover:text-purple-700 transition-all transform hover:scale-110"
-                  title="Anghami"
-                >
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Anghami_Icon.png"
-                    alt="Anghami"
-                    className="w-10 h-10"
-                    style={{
-                      filter:
-                        "invert(35%) sepia(99%) saturate(2000%) hue-rotate(260deg) brightness(108%) contrast(101%)",
-                    }}
-                  />
-                </a>
-              )}
+              ))}
             </div>
-          </>
-        )}
-
-        {/* Audio Player */}
-        {podcast.audioUrl && (
-          <div className="mt-8">
-            <h3 dir="rtl" className="mb-3 text-lg font-semibold text-gray-800">
-              استمع الآن:
-            </h3>
-            <audio controls className="w-full rounded-lg shadow-sm">
-              <source src={podcast.audioUrl} type="audio/mpeg" />
-              Your browser does not support the audio element.
-            </audio>
           </div>
-        )}
+        </aside>
+      </div>
 
-        {/* Video Player */}
-        {podcast.videoUrl && (
-          <div className="mt-8">
-            <h3 dir="rtl" className="mb-3 text-lg font-semibold text-gray-800">
-              شاهد الآن:
-            </h3>
-            <video controls className="w-full rounded-lg shadow-lg">
-              <source src={podcast.videoUrl} type="video/mp4" />
-              Your browser does not support the video element.
-            </video>
-          </div>
-        )}
-      </section>
-
-      {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div
@@ -378,7 +509,6 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
         </div>
       )}
 
-      {/* Edit Modal */}
       {showEditModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
           <div
@@ -390,7 +520,6 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
               تعديل البودكاست
             </h3>
 
-            {/* Basic Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6" dir="rtl">
               <div>
                 <label className="block text-sm font-semibold mb-2">
@@ -458,7 +587,6 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
               </div>
             </div>
 
-            {/* Platform Links */}
             <div className="border-t pt-4 mb-6">
               <h4 className="text-sm font-semibold mb-4 text-right" dir="rtl">
                 روابط المنصات
@@ -552,7 +680,6 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
               </div>
             </div>
 
-            {/* Action Buttons */}
             <div className="flex gap-3 justify-end pt-4 border-t sticky bottom-0 bg-white">
               <button
                 onClick={() => setShowEditModal(false)}
@@ -564,7 +691,7 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
               <button
                 onClick={handleUpdate}
                 disabled={isUpdating}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 min-w-[120px]"
+                className="px-6 py-2 bg-primary text-white rounded-lg cursor-pointer transition disabled:opacity-50 min-w-[120px]"
               >
                 {isUpdating ? "جاري التحديث..." : "حفظ التغييرات"}
               </button>

@@ -62,7 +62,7 @@ const PodcastUpload = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch("https://server.itspopcast.com/category");
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/category`);
       if (response.ok) {
         const data = await response.json();
         setCategories(data);
@@ -80,7 +80,7 @@ const PodcastUpload = () => {
 
     setIsCreatingCategory(true);
     try {
-      const response = await fetch("https://server.itspopcast.com/category", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/category`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -211,7 +211,7 @@ const PodcastUpload = () => {
         data.append("thumbnail", thumbnailFile);
       }
 
-      const response = await fetch("https://server.itspopcast.com/podcast", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/podcast`, {
         method: "POST",
         body: data,
         headers: {

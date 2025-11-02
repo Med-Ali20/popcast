@@ -226,7 +226,7 @@ const About = () => {
         params.append("search", search);
       }
 
-      const response = await fetch(`https://server.itspopcast.com/article?${params}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/article?${params}`);
       const data = await response.json();
 
       setArticle(data.articles[0] || null);
@@ -251,7 +251,7 @@ const About = () => {
         params.append("search", search);
       }
 
-      const response = await fetch(`https://server.itspopcast.com/podcast?${params}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/podcast?${params}`);
       const data = await response.json();
 
       setPodcast(data.podcasts[0] || null);
@@ -335,7 +335,7 @@ const About = () => {
           <Zoom triggerOnce>
             <h3 className="text-lg flex flex-row-reverse justify-center gap-2 items-center md:text-2xl mx-auto font-bold mb-3 md:mb-10 w-fit">
               <BookOpen />
-              اطلع على مقالاتنا
+              أحدث المقالات
             </h3>
           </Zoom>
           <Slide direction="up" triggerOnce>

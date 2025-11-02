@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   try {
     const response = await fetch(
-      `https://server.itspopcast.com/podcast/${slug}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/podcast/${slug}`,
       {
         cache: "no-store",
       }
@@ -118,7 +118,7 @@ export default async function PodcastPage({ params }: Props) {
   const { slug } = await params;
   try {
     const response = await fetch(
-      `https://server.itspopcast.com/podcast/${slug}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/podcast/${slug}`,
       {
         cache: "no-store",
       }

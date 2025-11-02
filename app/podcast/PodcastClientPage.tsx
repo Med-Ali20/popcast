@@ -173,7 +173,7 @@ const PodcastPage = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch("https://server.itspopcast.com/category");
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/category`);
       if (response.ok) {
         const data = await response.json();
         setCategories(data);
@@ -199,7 +199,7 @@ const PodcastPage = () => {
         params.append("category", category);
       }
 
-      const response = await fetch(`https://server.itspopcast.com/podcast?${params}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/podcast?${params}`);
       const data = await response.json();
 
       setPodcasts(data.podcasts || []);

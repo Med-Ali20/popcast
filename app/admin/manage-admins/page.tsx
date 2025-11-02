@@ -47,7 +47,7 @@ const ManageAdminUsers = () => {
   const fetchAdminUsers = async () => {
     setIsFetchingAdmins(true);
     try {
-      const response = await fetch("https://server.itspopcast.com/admin", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${session?.accessToken}`,
@@ -111,7 +111,7 @@ const ManageAdminUsers = () => {
     }
 
     try {
-      const response = await fetch("https://server.itspopcast.com/admin/register", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -156,7 +156,7 @@ const ManageAdminUsers = () => {
     }
 
     try {
-      const response = await fetch(`https://server.itspopcast.com/admin/delete/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/delete/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${session?.accessToken}`,

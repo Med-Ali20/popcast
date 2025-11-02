@@ -63,7 +63,7 @@ const History = () => {
       <h2 className="text-white mx-auto text-center text-xl lg:text-4xl font-emirates lg:pt-5 font-bold w-fit my-5">
         تاريخ البوب العربي
       </h2>
-      <div className="text-white font-emirates flex relative mt-8 h-[20vw]">
+      <div className="text-white font-emirates hidden  md:flex relative mt-8 h-[20vw]">
         <div className="flex flex-col items-center absolute left-[3vw] top-[17vw] lg:top-[20vw]">
           <h3 className="text-center text-[2.5vw] my-4 font-bold">
             2010s–2020s

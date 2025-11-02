@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   try {
     const response = await fetch(
-      `https://server.itspopcast.com/article/${slug}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/article/${slug}`,
       {
         cache: "no-store", // Always fetch fresh data
       }
@@ -117,7 +117,7 @@ export default async function ArticlePage({ params }: Props) {
   const { slug } = await params;
   try {
     const response = await fetch(
-      `https://server.itspopcast.com/article/${slug}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/article/${slug}`,
       {
         cache: "no-store",
       }

@@ -51,6 +51,13 @@ interface PaginationProps {
 
 // Article Card Component
 const ArticleCard: React.FC<ArticleCardProps> = ({ article, onClick }) => {
+  function getExcerpt(html: string, length: number): string {
+    if (!html) return "";
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const text = doc.body.textContent || "";
+    return text.length > length ? text.substring(0, length) + "..." : text;
+  }
+
   return (
     <div
       dir="rtl"
@@ -95,7 +102,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, onClick }) => {
 
         {/* Content preview */}
         <p className="text-sm text-gray-600 leading-relaxed line-clamp-3 mb-3">
-          {article.content.replace(/<[^>]*>/g, "").substring(0, 150)}...
+          {getExcerpt(article.content, 150)}
         </p>
 
         {/* Tags */}

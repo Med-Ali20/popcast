@@ -43,3 +43,91 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
 }
+
+
+/* CKEditor 5 Custom Styles */
+.ck-editor__editable {
+  min-height: 400px;
+}
+
+.ck-content {
+  font-family: inherit;
+}
+
+.ck-content h1 {
+  font-size: 2em;
+  font-weight: bold;
+}
+
+.ck-content h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.ck-content h3 {
+  font-size: 1.25em;
+  font-weight: bold;
+}
+
+.ck-content img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1rem auto;
+}
+
+.ck-content blockquote {
+  border-left: 5px solid #ccc;
+  font-style: italic;
+  margin-left: 0;
+  margin-right: 0;
+  overflow: hidden;
+  padding-left: 1.5em;
+  padding-right: 1.5em;
+}
+
+.ck-content a {
+  color: #4f46e5;
+  text-decoration: underline;
+}
+
+/* globals.css */
+.article-content h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 1.2em 0 0.6em;
+}
+
+.article-content h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 1em 0 0.5em;
+}
+
+.article-content p {
+  margin-bottom: 1em;
+  line-height: 1.7;
+}
+
+.article-content blockquote {
+  border-left: 4px solid #ccc;
+  padding-left: 1em;
+  color: #555;
+  font-style: italic;
+}
+
+.article-content ul {
+  list-style: disc;
+  margin-left: 1.5em;
+}
+
+.article-content ol {
+  list-style: decimal;
+  margin-left: 1.5em;
+}
+
+.article-content img {
+  max-width: 100%;
+  border-radius: 0.5rem;
+  margin: 1em 0;
+}

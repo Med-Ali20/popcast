@@ -107,7 +107,7 @@ const ContactPage = () => {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen font-emirates bg-gray-50">
       <section className="relative bg-primary text-white py-20 px-4">
         <div className="relative max-w-4xl mx-auto text-center">
           <h1 className="text-5xl font-bold mb-6" dir="rtl">

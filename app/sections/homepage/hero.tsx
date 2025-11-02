@@ -96,45 +96,45 @@ const Hero = () => {
               />
 
               <div className="absolute w-3/5 -left-[15%] md:left-[10%] top-[80%] md:w-2/5 md:left-[15%] md:top-[75%]">
-  {/* --- Black background placeholder --- */}
-  <div
-    className="absolute w-[70%] md:w-[67%] left-[2%] top-[22%] md:left-[2.5%] md:top-[22%] bg-black aspect-video"
-    style={{
-      transform: "rotateY(38deg) rotateX(12deg) rotateZ(8deg)",
-      clipPath: "polygon(3% 5%, 97% 3%, 98% 95%, 2% 97%)",
-      backgroundColor: "#000",
-    }}
-  ></div>
+                {/* --- Black background placeholder --- */}
+                <div
+                  className="absolute w-[70%] md:w-[67%] left-[2%] top-[22%] md:left-[2.5%] md:top-[22%] bg-black aspect-video"
+                  style={{
+                    transform: "rotateY(38deg) rotateX(12deg) rotateZ(8deg)",
+                    clipPath: "polygon(3% 5%, 97% 3%, 98% 95%, 2% 97%)",
+                    backgroundColor: "#000",
+                  }}
+                ></div>
 
-  {/* --- TV container --- */}
-  <div
-    className="absolute w-[70%] md:w-[67%] left-[2%] top-[22%] md:left-[2.5%] md:top-[22%] rounded-sm overflow-hidden z-10"
-    style={{
-      transform: "rotateY(38deg) rotateX(12deg) rotateZ(8deg)",
-      clipPath: "polygon(3% 5%, 97% 3%, 98% 95%, 2% 97%)",
-    }}
-  >
-    {/* Video overlay */}
-    <video
-      src="/images/video.mp4"
-      autoPlay
-      muted
-      loop
-      playsInline
-      className="w-full h-full object-cover"
-    />
-  </div>
-  {/* Cinematic bars (top + bottom) */}
-  <div className="absolute top-[18.2%] left-[10%] w-[80%] h-[8%] bg-black rotate-[9deg] z-20"></div>
-  <div className="absolute bottom-[33.7%] left-[10%] w-[80%] h-[8%] bg-black rotate-[8.5deg] z-20"></div>
+                {/* --- TV container --- */}
+                <div
+                  className="absolute w-[70%] md:w-[67%] left-[2%] top-[22%] md:left-[2.5%] md:top-[22%] rounded-sm overflow-hidden z-10"
+                  style={{
+                    transform: "rotateY(38deg) rotateX(12deg) rotateZ(8deg)",
+                    clipPath: "polygon(3% 5%, 97% 3%, 98% 95%, 2% 97%)",
+                  }}
+                >
+                  {/* Video overlay */}
+                  <video
+                    src="/images/video.mp4"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                {/* Cinematic bars (top + bottom) */}
+                <div className="absolute top-[18.2%] left-[10%] w-[80%] h-[8%] bg-black rotate-[9deg] z-20"></div>
+                <div className="absolute bottom-[33.7%] left-[10%] w-[80%] h-[8%] bg-black rotate-[8.5deg] z-20"></div>
 
-  {/* TV frame image (above video) */}
-  <img
-    src="/elements/09.png"
-    alt="TV"
-    className="relative z-40 pointer-events-none"
-  />
-</div>
+                {/* TV frame image (above video) */}
+                <img
+                  src="/elements/09.png"
+                  alt="TV"
+                  className="relative z-40 pointer-events-none"
+                />
+              </div>
 
               <img
                 src="/elements/08.png"

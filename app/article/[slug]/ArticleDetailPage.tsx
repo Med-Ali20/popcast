@@ -353,7 +353,7 @@ const ArticleDetailPage = ({ initialArticle }: ArticleDetailPageProps) => {
             <div
               dir="rtl"
               dangerouslySetInnerHTML={{ __html: article.content }}
-              className="article-content leading-relaxed"
+              className="article-content leading-relaxed text-justify text-gray-800"
             ></div>
           )}
 

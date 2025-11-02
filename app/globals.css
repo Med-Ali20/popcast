@@ -107,6 +107,7 @@ body {
 .article-content p {
   margin-bottom: 1em;
   line-height: 1.7;
+  text-align: justify;
 }
 
 .article-content blockquote {

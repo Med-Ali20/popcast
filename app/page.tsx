@@ -1,74 +1,82 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Hero from "./sections/homepage/hero";
 import About from "./sections/homepage/about";
 import History from "./sections/homepage/history";
+import { Suspense } from "react";
+import Loading from "./components/loading";
 
 export const metadata: Metadata = {
-  title: 'بوب كاست - مساحة إبداعية جديدة للبوب العربي',
-  description: 'بوب كاست هو امتداد لمشروع ArabiaPop انطلق في 2025، مساحة إبداعية جديدة بروح مختلفة لكن بحرية. يفتح الباب للحوار والتجارب، مع قصص من وراء الكواليس، حلقات بودكاست مع صناع الموسيقى والجمهور، ومقالات تحليلية تغوص في تاريخ البوب العربي من الثمانينات إلى الألفينات وصولاً للعقد الأخير',
+  title: "بوب كاست - مساحة إبداعية جديدة للبوب العربي",
+  description:
+    "بوب كاست هو امتداد لمشروع ArabiaPop انطلق في 2025، مساحة إبداعية جديدة بروح مختلفة لكن بحرية. يفتح الباب للحوار والتجارب، مع قصص من وراء الكواليس، حلقات بودكاست مع صناع الموسيقى والجمهور، ومقالات تحليلية تغوص في تاريخ البوب العربي من الثمانينات إلى الألفينات وصولاً للعقد الأخير",
   keywords: [
-    'بوب كاست',
-    'البوب العربي',
-    'ArabiaPop',
-    'بودكاست عربي',
-    'موسيقى عربية',
-    'تاريخ البوب العربي',
-    'الثمانينات',
-    'التسعينات',
-    'الألفينات',
-    'ثقافة شعبية عربية',
-    'فيديو كليب',
-    'روتانا',
-    'ميلودي',
-    'مازيكا',
-    'مقالات موسيقية',
-    'دوكس موسيقية',
-    'لقاءات فنية',
-    'كواليس الفن'
+    "بوب كاست",
+    "البوب العربي",
+    "ArabiaPop",
+    "بودكاست عربي",
+    "موسيقى عربية",
+    "تاريخ البوب العربي",
+    "الثمانينات",
+    "التسعينات",
+    "الألفينات",
+    "ثقافة شعبية عربية",
+    "فيديو كليب",
+    "روتانا",
+    "ميلودي",
+    "مازيكا",
+    "مقالات موسيقية",
+    "دوكس موسيقية",
+    "لقاءات فنية",
+    "كواليس الفن",
   ],
-  
+
   openGraph: {
-    title: 'بوب كاست - مساحة إبداعية جديدة للبوب العربي',
-    description: 'امتداد لمشروع ArabiaPop، مساحة إبداعية تفتح الباب للحوار والتجارب. قصص من وراء الكواليس، بودكاست مع صناع الموسيقى، ومقالات تحليلية تغوص في تاريخ البوب العربي من الثمانينات حتى اليوم',
-    type: 'website',
-    url: 'https://itspopcast.com',
-    siteName: 'بوب كاست',
-    images: [{
-      url: '/images/homepage-og.jpg',
-      width: 1200,
-      height: 630,
-      alt: 'بوب كاست - تاريخ البوب العربي',
-    }],
-    locale: 'ar_EG',
+    title: "بوب كاست - مساحة إبداعية جديدة للبوب العربي",
+    description:
+      "امتداد لمشروع ArabiaPop، مساحة إبداعية تفتح الباب للحوار والتجارب. قصص من وراء الكواليس، بودكاست مع صناع الموسيقى، ومقالات تحليلية تغوص في تاريخ البوب العربي من الثمانينات حتى اليوم",
+    type: "website",
+    url: "https://itspopcast.com",
+    siteName: "بوب كاست",
+    images: [
+      {
+        url: "/images/homepage-og.jpg",
+        width: 1200,
+        height: 630,
+        alt: "بوب كاست - تاريخ البوب العربي",
+      },
+    ],
+    locale: "ar_EG",
   },
-  
+
   twitter: {
-    card: 'summary_large_image',
-    title: 'بوب كاست - مساحة إبداعية جديدة للبوب العربي',
-    description: 'امتداد لمشروع ArabiaPop، قصص من وراء الكواليس، بودكاست مع صناع الموسيقى، ومقالات تحليلية عن تاريخ البوب العربي',
-    images: ['/images/homepage-twitter.jpg'],
-    creator: '@popcast',
+    card: "summary_large_image",
+    title: "بوب كاست - مساحة إبداعية جديدة للبوب العربي",
+    description:
+      "امتداد لمشروع ArabiaPop، قصص من وراء الكواليس، بودكاست مع صناع الموسيقى، ومقالات تحليلية عن تاريخ البوب العربي",
+    images: ["/images/homepage-twitter.jpg"],
+    creator: "@popcast",
   },
-  
+
   alternates: {
-    canonical: 'https://itspopcast.com',
+    canonical: "https://itspopcast.com",
   },
-  
+
   other: {
-    'theme-color': '#ffffff',
-    'og:site_name': 'بوب كاست',
+    "theme-color": "#ffffff",
+    "og:site_name": "بوب كاست",
   },
 };
 
 export default function Home() {
   return (
-    <main>
-      <div className="overflow-x-hidden">
-        <Hero />
-        <About />
-        <History />
-      </div>
-    </main>
+    <Suspense fallback={<Loading />}>
+      <main>
+        <div className="overflow-x-hidden">
+          <Hero />
+          <About />
+          <History />
+        </div>
+      </main>
+    </Suspense>
   );
 }

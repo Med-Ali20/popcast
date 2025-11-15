@@ -111,7 +111,7 @@ body {
 }
 
 .article-content blockquote {
-  border-left: 4px solid #ccc;
+  /* border-left: 4px solid #ccc; */
   padding-left: 1em;
   color: #555;
   font-style: italic;
@@ -120,6 +120,7 @@ body {
 .article-content ul {
   list-style: disc;
   margin-left: 1.5em;
+  margin-right: 2rem;
 }
 
 .article-content ol {

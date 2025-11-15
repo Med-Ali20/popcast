@@ -27,6 +27,7 @@ const ArticleDetailPage = ({ initialArticle }: ArticleDetailPageProps) => {
   // Edit form state
   const [editForm, setEditForm] = useState({
     title: initialArticle.title || "",
+    subTitle: initialArticle.subTitle || "",
     content: initialArticle.content || "",
     author: initialArticle.author || "",
     category: initialArticle.category || "",
@@ -36,6 +37,7 @@ const ArticleDetailPage = ({ initialArticle }: ArticleDetailPageProps) => {
   });
 
   const isUserAdmin = isAdmin(session);
+  console.log('article: ', initialArticle)
 
   useEffect(() => {
     fetchRecentContent();
@@ -45,7 +47,7 @@ const ArticleDetailPage = ({ initialArticle }: ArticleDetailPageProps) => {
     try {
       // Fetch recent articles
       const articlesRes = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/article?limit=3&sort=-date`
+        `${process.env.NEXT_PUBLIC_API_URL}/article?limit=5&sort=-date`
       );
       if (articlesRes.ok) {
         const articlesData = await articlesRes.json();
@@ -54,7 +56,7 @@ const ArticleDetailPage = ({ initialArticle }: ArticleDetailPageProps) => {
 
       // Fetch recent podcasts
       const podcastsRes = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/podcast?limit=3&sort=-createdAt`
+        `${process.env.NEXT_PUBLIC_API_URL}/podcast?limit=5&sort=-createdAt`
       );
       if (podcastsRes.ok) {
         const podcastsData = await podcastsRes.json();
@@ -185,29 +187,30 @@ const ArticleDetailPage = ({ initialArticle }: ArticleDetailPageProps) => {
         </h1>
       </section>
 
-      <div className="w-full max-w-[1400px] flex flex-col lg:flex-row-reverse gap-8 px-4 py-8">
+      <div className="w-full max-w-[1400px] flex flex-col lg:flex-row-reverse gap-8 px-4 py-2">
         {/* Main Content */}
-        <section className="flex-1 lg:flex lg:flex-col bg-secondary relative">
+        <section className="flex-1 lg:flex px-8 pt-4 lg:flex-col w-full bg-secondary relative">
           <ArrowLeft
-            className="text-primary mb-4 cursor-pointer transition hover:opacity-70"
+            className="text-primary -mb-12 cursor-pointer transition hover:opacity-70"
             onClick={() => router.back()}
           />
+          <h2 dir="rtl" className="font-bold text-2xl my-6 pl-4 text-[#555]">{article.subTitle}</h2>
 
           {/* Share Button */}
-          <div className="relative ml-auto inline-block mb-6">
+          <div className="relative w-full lg:w-auto ml-auto inline-block mb-6">
             <button
               onClick={() => setShowShareMenu(!showShareMenu)}
-              className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg cursor-pointer transition"
+              className="flex ml-auto items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg cursor-pointer transition"
             >
               <Share2 className="w-4 h-4" />
               <span>مشاركة</span>
             </button>
 
             {showShareMenu && (
-              <div className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-lg border border-gray-200 p-2 z-20 min-w-[200px]">
+              <div dir="rtl" className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-lg border border-gray-200 p-2 z-20 min-w-[200px]">
                 <button
                   onClick={() => handleShare("facebook")}
-                  className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition text-right"
+                  className="w-full flex cursor-pointer items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition text-right"
                 >
                   <svg
                     className="w-5 h-5 text-blue-600"
@@ -220,20 +223,21 @@ const ArticleDetailPage = ({ initialArticle }: ArticleDetailPageProps) => {
                 </button>
                 <button
                   onClick={() => handleShare("twitter")}
-                  className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition text-right"
+                  className="w-full flex cursor-pointer items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition text-right"
                 >
                   <svg
-                    className="w-5 h-5 text-sky-500"
-                    fill="currentColor"
+                    className="w-5 h-5 text-blue-700"
+                    fill="black"
                     viewBox="0 0 24 24"
                   >
-                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
+                    <path d="M18.244 2H21.5l-7.61 8.67L22.5 22h-6.79l-5.3-6.93L4.5 22H1.24l8.15-9.29L1.5 2h6.92l4.73 6.2L18.24 2z" />
                   </svg>
-                  <span>تويتر</span>
+
+                  <span>إكس</span>
                 </button>
                 <button
                   onClick={() => handleShare("linkedin")}
-                  className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition text-right"
+                  className="w-full flex cursor-pointer items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition text-right"
                 >
                   <svg
                     className="w-5 h-5 text-blue-700"
@@ -246,7 +250,7 @@ const ArticleDetailPage = ({ initialArticle }: ArticleDetailPageProps) => {
                 </button>
                 <button
                   onClick={() => handleShare("copy")}
-                  className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition text-right"
+                  className="w-full flex cursor-pointer items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition text-right"
                 >
                   <svg
                     className="w-5 h-5 text-gray-600"
@@ -353,7 +357,7 @@ const ArticleDetailPage = ({ initialArticle }: ArticleDetailPageProps) => {
             <div
               dir="rtl"
               dangerouslySetInnerHTML={{ __html: article.content }}
-              className="article-content leading-relaxed text-justify text-gray-800"
+              className="article-content leading-relaxed text-justifymb-6 text-gray-800"
             ></div>
           )}
 
@@ -396,12 +400,15 @@ const ArticleDetailPage = ({ initialArticle }: ArticleDetailPageProps) => {
         </section>
 
         {/* Sidebar */}
-        <aside className="lg:w-80 space-y-6">
+        <aside className="lg:w-80 space-y-6 mt-4">
           {/* Recent Articles */}
+          <h3
+            className="text-lg font-bold mb-4 text-right text-primary"
+            dir="rtl"
+          >
+            أحدث المقالات
+          </h3>
           <div className="bg-white rounded-lg shadow-md p-4">
-            <h3 className="text-lg font-bold mb-4 text-right" dir="rtl">
-              أحدث المقالات
-            </h3>
             <div className="space-y-3">
               {recentArticles.map((item: any) => (
                 <a
@@ -430,10 +437,13 @@ const ArticleDetailPage = ({ initialArticle }: ArticleDetailPageProps) => {
           </div>
 
           {/* Recent Podcasts */}
+          <h3
+            className="text-lg font-bold mb-4 text-right text-primary"
+            dir="rtl"
+          >
+            أحدث الحلقات
+          </h3>
           <div className="bg-white rounded-lg shadow-md p-4">
-            <h3 className="text-lg font-bold mb-4 text-right" dir="rtl">
-              أحدث البودكاست
-            </h3>
             <div className="space-y-3">
               {recentPodcasts.map((item: any) => (
                 <a

@@ -13,22 +13,14 @@ import {
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import dynamic from "next/dynamic";
 
-// Dynamically import CKEditor with no SSR
-const CKEditor = dynamic(
-  () => import("@ckeditor/ckeditor5-react").then((mod) => mod.CKEditor),
-  { ssr: false }
-);
-
-const ClassicEditor = dynamic(
-  // @ts-ignore
-  () => import("@ckeditor/ckeditor5-build-classic"),
-  { ssr: false }
-);
+// Correct CKEditor 5 imports
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 interface FormData {
   title: string;
+  subTitle: string;
   content: string;
   author: string;
   category: string;
@@ -51,6 +43,7 @@ const ArticleUpload: React.FC = () => {
   const [editorLoaded, setEditorLoaded] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     title: "",
+    subTitle: "",
     content: "",
     author: "",
     category: "",
@@ -215,6 +208,7 @@ const ArticleUpload: React.FC = () => {
       const data = new FormData();
 
       data.append("title", formData.title.trim());
+      data.append("subTitle", formData.subTitle.trim());
       data.append("content", formData.content);
       data.append("author", formData.author.trim());
       data.append("category", formData.category.trim());
@@ -253,6 +247,7 @@ const ArticleUpload: React.FC = () => {
       // Reset form
       setFormData({
         title: "",
+        subTitle: "",
         content: "",
         author: "",
         category: "",
@@ -344,20 +339,53 @@ const ArticleUpload: React.FC = () => {
               </p>
             )}
           </div>
+          <div>
+            <label
+              htmlFor="subTitle"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Sub-Title *
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <FileText className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                id="subTitle"
+                name="subTitle"
+                value={formData.subTitle}
+                onChange={handleChange}
+                className={`block w-full pl-10 pr-3 py-2.5 border ${
+                  errors.title
+                    ? "border-red-300 focus:ring-red-500 focus:border-red-500"
+                    : "border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+                } rounded-lg focus:outline-none focus:ring-2 transition-colors`}
+                placeholder="Enter article sub-title"
+              />
+            </div>
+            {errors.title && (
+              <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                <AlertCircle className="w-4 h-4" />
+                {errors.title}
+              </p>
+            )}
+          </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Content *
             </label>
 
-            <div
-              className={`border ${
-                errors.content ? "border-red-300" : "border-gray-300"
-              } rounded-lg overflow-hidden`}
-            >
-              {editorLoaded ? (
+            {editorLoaded && (
+              <div
+                className={`border ${
+                  errors.content ? "border-red-300" : "border-gray-300"
+                } rounded-lg overflow-hidden`}
+              >
                 <CKEditor
-                  editor={ClassicEditor as any}
+                // @ts-ignore
+                  editor={ClassicEditor}
                   data={formData.content}
                   onChange={handleEditorChange}
                   config={{
@@ -380,56 +408,10 @@ const ArticleUpload: React.FC = () => {
                       "undo",
                       "redo",
                     ],
-                    heading: {
-                      options: [
-                        {
-                          model: "paragraph",
-                          title: "Paragraph",
-                          class: "ck-heading_paragraph",
-                        },
-                        {
-                          model: "heading1",
-                          view: "h1",
-                          title: "Heading 1",
-                          class: "ck-heading_heading1",
-                        },
-                        {
-                          model: "heading2",
-                          view: "h2",
-                          title: "Heading 2",
-                          class: "ck-heading_heading2",
-                        },
-                        {
-                          model: "heading3",
-                          view: "h3",
-                          title: "Heading 3",
-                          class: "ck-heading_heading3",
-                        },
-                      ],
-                    },
-                    image: {
-                      toolbar: [
-                        "imageTextAlternative",
-                        "imageStyle:inline",
-                        "imageStyle:block",
-                        "imageStyle:side",
-                      ],
-                    },
-                    table: {
-                      contentToolbar: [
-                        "tableColumn",
-                        "tableRow",
-                        "mergeTableCells",
-                      ],
-                    },
                   }}
                 />
-              ) : (
-                <div className="p-4 text-center text-gray-500">
-                  Loading editor...
-                </div>
-              )}
-            </div>
+              </div>
+            )}
 
             {errors.content && (
               <p className="mt-2 text-sm text-red-600 flex items-center gap-1">

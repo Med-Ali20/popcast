@@ -94,13 +94,13 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   };
 
   return (
-    <div className="flex justify-center items-center gap-2 mt-8">
+    <div dir="rtl" className="flex justify-center items-center gap-2 mt-8">
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
         className="flex items-center gap-1 px-3 py-2 cursor-pointer text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <ChevronLeft className="w-4 h-4" />
+        <ChevronRight className="w-4 h-4" />
         السابق
       </button>
 
@@ -133,7 +133,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         className="flex items-center cursor-pointer gap-1 px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         التالي
-        <ChevronRight className="w-4 h-4" />
+        <ChevronLeft className="w-4 h-4" />
       </button>
     </div>
   );
@@ -248,7 +248,7 @@ const PodcastPage = () => {
   };
 
   return (
-    <main className="bg-gray-100 min-h-screen">
+    <main className="bg-gray-100 min-h-screen font-emirates">
       {/* Search and Filter Bar */}
       <div className="relative w-full h-[70px] pr-8 md:pr-0 justify-center bg-gray-300 py-6 flex flex-row-reverse gap-5 items-center">
         {/* Category Filter */}

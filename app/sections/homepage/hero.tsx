@@ -2,12 +2,14 @@
 
 import React, { useRef, useEffect, useState } from "react";
 import { Zoom, Slide, Fade, Bounce } from "react-awesome-reveal";
+import { useRouter } from "next/navigation";
 import "./styles.css";
 
 const Hero = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [eyeAnimationActive, setEyeAnimationActive] = useState(false);
   const cardRef = useRef(null);
+  const router = useRouter();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -165,61 +167,69 @@ const Hero = () => {
           </Fade>
 
           <div className="w-full flex flex-col-reverse lg:flex-row lg:gap-10 text-right text-white mt-12">
-            <div className="flex w-[100%] items-center a cursor-pointer shadow-2xl rounded-2xl py-4 lg:w-[50%] mt-6 lg:mt-0 pr-4">
-              <div className="ml-auto">
+            <div
+              className="group relative flex w-[100%] origin-right items-center cursor-pointer shadow-2xl rounded-2xl py-4 lg:w-[50%] mt-6 lg:mt-0 pr-4 overflow-hidden"
+              onClick={() => router.push("/article")}
+            >
+              {/* Hover overlay */}
+              <div className="absolute inset-0 bg-[rgba(0,0,0,0.3)] rounded-2xl origin-right transform transition-transform duration-350 ease-out scale-x-[0] group-hover:scale-x-[1]"></div>
+
+              <div className="ml-auto relative z-10">
                 <h3 className="text-2xl lg:text-2xl font-bold">اقرأ</h3>
                 <p className="text-lg">مقالات بوب كاست</p>
               </div>
-              <img src="/elements/13.png" alt="" className="w-[70px] ml-5" />
-            </div>
-            <div
-              ref={cardRef}
-              className="flex w-[100%] a cursor-pointer items-center py-3 pr-4 rounded-2xl lg:w-[50%] relative overflow-hidden"
-            >
-              {/* Animated background that expands from right to left */}
-              <div
-                className={`absolute inset-0 bg-[rgba(0,0,0,0.3)] rounded-2xl origin-right transform transition-transform duration-800 ease-out ${
-                  isVisible ? "scale-x-100" : "scale-x-0"
-                }`}
-              ></div>
 
-              {/* Content stays in place */}
-              <div className="ml-auto relative ">
+              <img
+                src="/elements/13.png"
+                alt=""
+                className="w-[70px] ml-5 relative z-10"
+              />
+            </div>
+
+            <div
+              onClick={() => router.push("/podcast")}
+              className="group flex w-[100%] cursor-pointer items-center py-3 pr-4  shadow-2xl rounded-2xl lg:w-[50%] relative overflow-hidden"
+            >
+              {/* Hover expanding background */}
+              <div className="absolute inset-0 bg-[rgba(0,0,0,0.3)] rounded-2xl origin-right transform transition-transform duration-350 ease-out scale-x-[0] group-hover:scale-x-[1]"></div>
+
+              {/* Content */}
+              <div className="ml-auto relative z-10">
                 <h3 className="text-2xl lg:text-2xl font-bold">شاهد</h3>
                 <p className="text-lg">محتوى بصري</p>
               </div>
-              <div className="relative w-fit ml-5">
+
+              <div className="relative w-fit ml-5 z-10">
                 <img
                   src="/elements/eye.png"
                   alt=""
                   className="w-[70px] h-[70px] object-contain relative"
                 />
-                {/* Pupil - only animate when triggered */}
+
+                {/* Pupil */}
                 <span
-                  className={`absolute inset-0 w-[20px] h-[20px] 
-                   bg-white rounded-full 
-                   top-1/2 left-1/2 
-                   -translate-x-1/2 -translate-y-1/2 `}
+                  className="absolute inset-0 w-[20px] h-[20px] bg-white rounded-full 
+      top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
                   style={{
                     animation: eyeAnimationActive ? "float 2s" : "none",
                   }}
                 ></span>
-                {/* Top eyelid - only animate when triggered */}
+
+                {/* Top eyelid */}
                 <span
-                  className={`absolute inset-0 w-[0] h-[16px] 
-                   bg-white rounded-t-full 
-                   md:top-[42%] md:left-1/2 top-[42%] left-[25%] origin-top hidden md:block
-                   -translate-x-1/2 -translate-y-1/2 `}
+                  className="absolute inset-0 w-[0] h-[16px] bg-white rounded-t-full 
+      md:top-[42%] md:left-1/2 top-[42%] left-[25%] origin-top hidden md:block
+      -translate-x-1/2 -translate-y-1/2"
                   style={{
                     animation: eyeAnimationActive ? "blink 1s 2s" : "none",
                   }}
                 ></span>
-                {/* Bottom eyelid - only animate when triggered */}
+
+                {/* Bottom eyelid */}
                 <span
-                  className={`absolute inset-0 h-[18px] w-[0]
-                   bg-white rounded-t-full 
-                   md:top-[86%] md:left-1/2 top-[86%] left-[25%] origin-top hidden md:block
-                   -translate-x-1/2 -translate-y-1/2 rotate-180`}
+                  className="absolute inset-0 h-[18px] w-[0] bg-white rounded-t-full 
+      md:top-[86%] md:left-1/2 top-[86%] left-[25%] origin-top hidden md:block
+      -translate-x-1/2 -translate-y-1/2 rotate-180"
                   style={{
                     animation: eyeAnimationActive ? "blink 1s 2s" : "none",
                   }}

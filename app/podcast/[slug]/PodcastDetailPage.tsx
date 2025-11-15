@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -36,7 +36,9 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
     title: initialPodcast.title || "",
     description: initialPodcast.description || "",
     category: initialPodcast.category?._id || "",
-    tags: Array.isArray(initialPodcast.tags) ? initialPodcast.tags.join(", ") : "",
+    tags: Array.isArray(initialPodcast.tags)
+      ? initialPodcast.tags.join(", ")
+      : "",
     spotify: initialPodcast.spotify || "",
     appleMusic: initialPodcast.appleMusic || "",
     anghami: initialPodcast.anghami || "",
@@ -60,7 +62,7 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
   const fetchRecentContent = async () => {
     try {
       const articlesRes = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/article?limit=3&sort=-date`
+        `${process.env.NEXT_PUBLIC_API_URL}/article?limit=5&sort=-date`
       );
       if (articlesRes.ok) {
         const articlesData = await articlesRes.json();
@@ -68,7 +70,7 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
       }
 
       const podcastsRes = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/podcast?limit=3&sort=-createdAt`
+        `${process.env.NEXT_PUBLIC_API_URL}/podcast?limit=5&sort=-createdAt`
       );
       if (podcastsRes.ok) {
         const podcastsData = await podcastsRes.json();
@@ -81,7 +83,9 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/category?type=podcast`)
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/category?type=podcast`
+      );
       if (response.ok) {
         const data = await response.json();
         setCategories(data);
@@ -91,40 +95,47 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
     }
   };
 
-  const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const shareUrl = typeof window !== "undefined" ? window.location.href : "";
   const shareTitle = podcast.title;
 
   const handleShare = (platform: string) => {
-    let url = '';
-    
-    switch(platform) {
-      case 'facebook':
-        url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+    let url = "";
+
+    switch (platform) {
+      case "facebook":
+        url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+          shareUrl
+        )}`;
         break;
-      case 'twitter':
-        url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareTitle)}`;
+      case "twitter":
+        url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+          shareUrl
+        )}&text=${encodeURIComponent(shareTitle)}`;
         break;
-      case 'linkedin':
-        url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
+      case "linkedin":
+        url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+          shareUrl
+        )}`;
         break;
-      case 'copy':
+      case "copy":
         navigator.clipboard.writeText(shareUrl);
         setCopySuccess(true);
         setTimeout(() => setCopySuccess(false), 2000);
         return;
     }
-    
+
     if (url) {
-      window.open(url, '_blank', 'width=600,height=400');
+      window.open(url, "_blank", "width=600,height=400");
     }
   };
 
   const getYouTubeVideoId = (url: string) => {
     if (!url) return null;
-    
-    const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+
+    const regExp =
+      /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
     const match = url.match(regExp);
-    return (match && match[7].length === 11) ? match[7] : null;
+    return match && match[7].length === 11 ? match[7] : null;
   };
 
   const handleDelete = async () => {
@@ -154,7 +165,7 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
   };
 
   const handleUpdate = async () => {
-   router.push(`/podcast/edit/${podcast._id}`);
+    router.push(`/podcast/edit/${podcast._id}`);
   };
 
   const formatDate = (dateString: string) => {
@@ -216,61 +227,85 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
             </div>
           )}
 
-          <div className="relative inline-block mb-6 ml-auto">
+          <div className="relative inline-block mb-6 w-full ml-auto">
             <button
               onClick={() => setShowShareMenu(!showShareMenu)}
-              className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg cursor-pointer transition"
+              className="flex items-center ml-auto gap-2 px-4 py-2 bg-primary text-white rounded-lg cursor-pointer transition"
             >
               <Share2 className="w-4 h-4" />
               <span>مشاركة</span>
             </button>
 
             {showShareMenu && (
-              <div className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-lg border border-gray-200 p-2 z-20 min-w-[200px]">
+              <div dir="rtl" className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-lg border border-gray-200 p-2 z-20 min-w-[200px]">
                 <button
-                  onClick={() => handleShare('facebook')}
+                  onClick={() => handleShare("facebook")}
                   className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition text-right"
                 >
-                  <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                  <svg
+                    className="w-5 h-5 text-blue-600"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                   </svg>
                   <span>فيسبوك</span>
                 </button>
                 <button
-                  onClick={() => handleShare('twitter')}
+                  onClick={() => handleShare("twitter")}
                   className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition text-right"
                 >
-                  <svg className="w-5 h-5 text-sky-500" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                  <svg
+                    className="w-5 h-5 text-blue-700"
+                    fill="black"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M18.244 2H21.5l-7.61 8.67L22.5 22h-6.79l-5.3-6.93L4.5 22H1.24l8.15-9.29L1.5 2h6.92l4.73 6.2L18.24 2z" />
                   </svg>
-                  <span>تويتر</span>
+
+                  <span>إكس</span>
                 </button>
                 <button
-                  onClick={() => handleShare('linkedin')}
+                  onClick={() => handleShare("linkedin")}
                   className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition text-right"
                 >
-                  <svg className="w-5 h-5 text-blue-700" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                  <svg
+                    className="w-5 h-5 text-blue-700"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                   </svg>
                   <span>لينكد إن</span>
                 </button>
                 <button
-                  onClick={() => handleShare('copy')}
+                  onClick={() => handleShare("copy")}
                   className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition text-right"
                 >
-                  <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                  <svg
+                    className="w-5 h-5 text-gray-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+                    />
                   </svg>
-                  <span>{copySuccess ? 'تم النسخ!' : 'نسخ الرابط'}</span>
+                  <span>{copySuccess ? "تم النسخ!" : "نسخ الرابط"}</span>
                 </button>
               </div>
             )}
           </div>
-        
-          
 
           {podcast.description && (
-            <h2 dir="rtl" className="text-right text-xl mb-6 text-gray-800 leading-relaxed">
+            <h2
+              dir="rtl"
+              className="text-right text-xl mb-6 text-gray-800 leading-relaxed"
+            >
               {podcast.description}
             </h2>
           )}
@@ -290,7 +325,7 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
           {podcast.category && (
             <div dir="rtl" className="mb-6">
               <span className="text-sm text-gray-600">التصنيف: </span>
-              <a 
+              <a
                 href={`/podcast?category=${podcast.category._id}`}
                 className="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer transition"
               >
@@ -301,10 +336,16 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
 
           {youtubeVideoId && (
             <div className="mb-8">
-              <h3 dir="rtl" className="mb-3 text-lg font-semibold text-gray-800">
+              <h3
+                dir="rtl"
+                className="mb-3 text-lg font-semibold text-gray-800"
+              >
                 شاهد على يوتيوب:
               </h3>
-              <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+              <div
+                className="relative w-full"
+                style={{ paddingBottom: "56.25%" }}
+              >
                 <iframe
                   className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
                   src={`https://www.youtube.com/embed/${youtubeVideoId}`}
@@ -319,7 +360,10 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
 
           {(podcast.spotify || podcast.appleMusic || podcast.anghami) && (
             <>
-              <h3 dir="rtl" className="mt-4 mb-3 text-lg font-semibold text-gray-800">
+              <h3
+                dir="rtl"
+                className="mt-4 mb-3 text-lg font-semibold text-gray-800"
+              >
                 استمع على:
               </h3>
               <div className="flex flex-wrap gap-6 justify-end p-5">
@@ -388,7 +432,10 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
 
           {podcast.audioUrl && (
             <div className="mt-8">
-              <h3 dir="rtl" className="mb-3 text-lg font-semibold text-gray-800">
+              <h3
+                dir="rtl"
+                className="mb-3 text-lg font-semibold text-gray-800"
+              >
                 استمع الآن:
               </h3>
               <audio controls className="w-full rounded-lg shadow-sm">
@@ -400,7 +447,10 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
 
           {podcast.videoUrl && (
             <div className="mt-8">
-              <h3 dir="rtl" className="mb-3 text-lg font-semibold text-gray-800">
+              <h3
+                dir="rtl"
+                className="mb-3 text-lg font-semibold text-gray-800"
+              >
                 شاهد الآن:
               </h3>
               <video controls className="w-full rounded-lg shadow-lg">
@@ -412,10 +462,13 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
         </section>
 
         <aside className="lg:w-80 space-y-6">
+          <h3
+            className="text-lg font-bold mb-4 text-right text-primary"
+            dir="rtl"
+          >
+            أحدث المقالات
+          </h3>
           <div className="bg-white rounded-lg shadow-md p-4">
-            <h3 className="text-lg font-bold mb-4 text-right" dir="rtl">
-              أحدث المقالات
-            </h3>
             <div className="space-y-3">
               {recentArticles.map((item: any) => (
                 <a
@@ -443,10 +496,13 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
             </div>
           </div>
 
+          <h3
+            className="text-lg font-bold mb-4 text-right text-primary"
+            dir="rtl"
+          >
+            أحدث الحلقات
+          </h3>
           <div className="bg-white rounded-lg shadow-md p-4">
-            <h3 className="text-lg font-bold mb-4 text-right" dir="rtl">
-              أحدث البودكاست
-            </h3>
             <div className="space-y-3">
               {recentPodcasts.map((item: any) => (
                 <a
@@ -516,11 +572,17 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
             onClick={() => setShowEditModal(false)}
           ></div>
           <div className="bg-white rounded-lg p-6 max-w-3xl w-full my-8 relative z-10 max-h-[90vh] overflow-y-auto">
-            <h3 className="text-xl font-bold mb-4 text-right sticky top-0 bg-white pb-2 border-b" dir="rtl">
+            <h3
+              className="text-xl font-bold mb-4 text-right sticky top-0 bg-white pb-2 border-b"
+              dir="rtl"
+            >
               تعديل البودكاست
             </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6" dir="rtl">
+            <div
+              className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6"
+              dir="rtl"
+            >
               <div>
                 <label className="block text-sm font-semibold mb-2">
                   العنوان *
@@ -599,7 +661,8 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
                       alt="Spotify"
                       className="w-4 h-4"
                       style={{
-                        filter: "invert(30%) sepia(99%) saturate(2000%) hue-rotate(95deg) brightness(108%) contrast(101%)",
+                        filter:
+                          "invert(30%) sepia(99%) saturate(2000%) hue-rotate(95deg) brightness(108%) contrast(101%)",
                       }}
                     />
                     Spotify
@@ -662,7 +725,8 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
                       alt="YouTube"
                       className="w-4 h-4"
                       style={{
-                        filter: "invert(25%) sepia(98%) saturate(7426%) hue-rotate(356deg) brightness(99%) contrast(118%)",
+                        filter:
+                          "invert(25%) sepia(98%) saturate(7426%) hue-rotate(356deg) brightness(99%) contrast(118%)",
                       }}
                     />
                     YouTube

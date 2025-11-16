@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   AlertCircle,
   BookOpen,
@@ -10,13 +10,11 @@ import {
   CheckCircle,
   FileText,
   Calendar,
+  LoaderCircle
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-
-// Correct CKEditor 5 imports
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { Editor } from "@tinymce/tinymce-react";
 
 interface FormData {
   title: string;
@@ -40,7 +38,7 @@ const ArticleUpload: React.FC = () => {
   const [errors, setErrors] = useState<Errors>({});
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string>("");
-  const [editorLoaded, setEditorLoaded] = useState(false);
+  const [uploadingMedia, setUploadingMedia] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
     title: "",
     subTitle: "",
@@ -52,6 +50,7 @@ const ArticleUpload: React.FC = () => {
     date: new Date().toISOString().slice(0, 16),
   });
 
+  const editorRef = useRef<any>(null);
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -60,13 +59,6 @@ const ArticleUpload: React.FC = () => {
       router.push("/admin/login");
     }
   }, [session, status, router]);
-
-  useEffect(() => {
-    // Only load editor on client side
-    if (typeof window !== "undefined") {
-      setEditorLoaded(true);
-    }
-  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -84,11 +76,10 @@ const ArticleUpload: React.FC = () => {
     }
   };
 
-  const handleEditorChange = (event: any, editor: any) => {
-    const data = editor.getData();
+  const handleEditorChange = (content: string) => {
     setFormData((prev) => ({
       ...prev,
-      content: data,
+      content: content,
     }));
     if (errors.content) {
       setErrors((prev) => ({
@@ -116,62 +107,70 @@ const ArticleUpload: React.FC = () => {
     }
   };
 
-  // Custom upload adapter for CKEditor
-  class UploadAdapter {
-    loader: any;
-    session: any;
+  // Custom upload handler for images and videos
+  const handleImageUpload = (blobInfo: any, progress: any) => {
+    return new Promise<string>(async (resolve, reject) => {
+      setUploadingMedia(true);
 
-    constructor(loader: any, session: any) {
-      this.loader = loader;
-      this.session = session;
-    }
+      // Show notification in TinyMCE
+      if (editorRef.current) {
+        editorRef.current.notificationManager.open({
+          text: "Uploading image to S3...",
+          type: "info",
+          timeout: -1,
+          closeButton: false,
+        });
+      }
 
-    upload() {
-      return this.loader.file.then(
-        (file: File) =>
-          new Promise(async (resolve, reject) => {
-            const formData = new FormData();
-            formData.append("media", file);
+      const formData = new FormData();
+      formData.append("media", blobInfo.blob(), blobInfo.filename());
 
-            try {
-              const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/article/upload-media`,
-                {
-                  method: "POST",
-                  headers: {
-                    Authorization: `Bearer ${this.session?.accessToken}`,
-                  },
-                  body: formData,
-                }
-              );
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/article/upload-media`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${session?.accessToken}`,
+            },
+            body: formData,
+          }
+        );
 
-              if (!response.ok) {
-                throw new Error("Upload failed");
-              }
+        if (!response.ok) {
+          alert("Upload failed, please try to login again.");
+          throw new Error("Upload failed");
+        }
 
-              const data = await response.json();
-              resolve({
-                default: data.url,
-              });
-            } catch (error: any) {
-              reject(error.message || "Upload failed");
-            }
-          })
-      );
-    }
+        const data = await response.json();
 
-    abort() {
-      // Handle abort if needed
-    }
-  }
+        // Close notification and show success
+        if (editorRef.current) {
+          editorRef.current.notificationManager.close();
+          editorRef.current.notificationManager.open({
+            text: "Upload successful!",
+            type: "success",
+            timeout: 2000,
+          });
+        }
 
-  function uploadPlugin(editor: any) {
-    editor.plugins.get("FileRepository").createUploadAdapter = (
-      loader: any
-    ) => {
-      return new UploadAdapter(loader, session);
-    };
-  }
+        resolve(data.url);
+      } catch (error: any) {
+        // Show error notification
+        if (editorRef.current) {
+          editorRef.current.notificationManager.close();
+          editorRef.current.notificationManager.open({
+            text: "Upload failed: " + (error.message || "Unknown error"),
+            type: "error",
+            timeout: 3000,
+          });
+        }
+        reject(error.message || "Upload failed");
+      } finally {
+        setUploadingMedia(false);
+      }
+    });
+  };
 
   const handleSubmit = async (): Promise<void> => {
     setIsLoading(true);
@@ -264,9 +263,10 @@ const ArticleUpload: React.FC = () => {
       ) as HTMLInputElement;
       if (thumbnailInput) thumbnailInput.value = "";
 
-      // Force editor to reset
-      setEditorLoaded(false);
-      setTimeout(() => setEditorLoaded(true), 100);
+      // Reset editor
+      if (editorRef.current) {
+        editorRef.current.setContent("");
+      }
     } catch (error: any) {
       console.error("Submit error:", error);
       setGeneralError(
@@ -279,6 +279,9 @@ const ArticleUpload: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="fixed top-0 right-0 bottom-0 left-0 bg-[rgba(0,0,0,0.3)] flex items-center justify-center z-5000" style={{ display: uploadingMedia ? 'flex' : 'none' }}>
+        <LoaderCircle className="w-16 h-16 text-white animate-spin z-5000" tabIndex={-1} />
+      </div>
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-5xl p-8">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-full mb-4">
@@ -344,7 +347,7 @@ const ArticleUpload: React.FC = () => {
               htmlFor="subTitle"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
-              Sub-Title *
+              Sub-Title
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -356,20 +359,10 @@ const ArticleUpload: React.FC = () => {
                 name="subTitle"
                 value={formData.subTitle}
                 onChange={handleChange}
-                className={`block w-full pl-10 pr-3 py-2.5 border ${
-                  errors.title
-                    ? "border-red-300 focus:ring-red-500 focus:border-red-500"
-                    : "border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
-                } rounded-lg focus:outline-none focus:ring-2 transition-colors`}
+                className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg focus:outline-none focus:ring-2 transition-colors"
                 placeholder="Enter article sub-title"
               />
             </div>
-            {errors.title && (
-              <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                <AlertCircle className="w-4 h-4" />
-                {errors.title}
-              </p>
-            )}
           </div>
 
           <div>
@@ -377,41 +370,160 @@ const ArticleUpload: React.FC = () => {
               Content *
             </label>
 
-            {editorLoaded && (
-              <div
-                className={`border ${
-                  errors.content ? "border-red-300" : "border-gray-300"
-                } rounded-lg overflow-hidden`}
-              >
-                <CKEditor
-                // @ts-ignore
-                  editor={ClassicEditor}
-                  data={formData.content}
-                  onChange={handleEditorChange}
-                  config={{
-                    extraPlugins: [uploadPlugin],
-                    toolbar: [
-                      "heading",
-                      "|",
-                      "bold",
-                      "italic",
-                      "link",
-                      "bulletedList",
-                      "numberedList",
-                      "|",
-                      "blockQuote",
-                      "insertTable",
-                      "|",
-                      "imageUpload",
-                      "mediaEmbed",
-                      "|",
-                      "undo",
-                      "redo",
-                    ],
-                  }}
-                />
+            {uploadingMedia && (
+              <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center gap-3">
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+                <p className="text-sm text-blue-700">
+                  Uploading media to S3...
+                </p>
               </div>
             )}
+
+            <div
+              className={`border ${
+                errors.content ? "border-red-300" : "border-gray-300"
+              } rounded-lg overflow-hidden`}
+            >
+              <Editor
+                apiKey=""
+                onInit={(evt, editor) => (editorRef.current = editor)}
+                value={formData.content}
+                onEditorChange={handleEditorChange}
+                init={{
+                  height: 500,
+                  menubar: true,
+                  plugins: [
+                    "advlist",
+                    "autolink",
+                    "lists",
+                    "link",
+                    "image",
+                    "charmap",
+                    "preview",
+                    "anchor",
+                    "searchreplace",
+                    "visualblocks",
+                    "code",
+                    "fullscreen",
+                    "insertdatetime",
+                    "media",
+                    "table",
+                    "code",
+                    "help",
+                    "wordcount",
+                    "emoticons",
+                    "codesample",
+                    "quickbars",
+                  ],
+                  toolbar:
+                    "undo redo | blocks | " +
+                    "bold italic forecolor | alignleft aligncenter " +
+                    "alignright alignjustify | bullist numlist outdent indent | " +
+                    "image media link | table codesample | " +
+                    "removeformat code | help",
+                  content_style:
+                    "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+
+                  // Image upload configuration
+                  images_upload_handler: handleImageUpload,
+                  automatic_uploads: true,
+                  images_reuse_filename: true,
+
+                  // Show upload progress
+                  images_upload_url: "postAcceptor.php",
+                  images_upload_base_path: "",
+                  images_upload_credentials: true,
+
+                  // Image resizing
+                  image_advtab: true,
+                  image_caption: true,
+                  image_title: true,
+
+                  // Allow resizing of images
+                  object_resizing: true,
+                  resize_img_proportional: true,
+
+                  // Media/Video configuration
+                  media_live_embeds: true,
+                  media_dimensions: true,
+                  media_poster: false,
+                  media_alt_source: false,
+
+                  // Video upload handler (for local video files)
+                  file_picker_types: "image media",
+                  file_picker_callback: function (callback, value, meta) {
+                    // Create file input
+                    const input = document.createElement("input");
+                    input.setAttribute("type", "file");
+
+                    // Set accept based on filetype
+                    if (meta.filetype === "image") {
+                      input.setAttribute("accept", "image/*");
+                    } else if (meta.filetype === "media") {
+                      input.setAttribute("accept", "video/*");
+                    }
+
+                    input.onchange = async function () {
+                      const file = (input as HTMLInputElement).files?.[0];
+                      if (file) {
+                        const uploadFormData = new FormData();
+                        uploadFormData.append("media", file);
+
+                        try {
+                          setUploadingMedia(true);
+
+                          const response = await fetch(
+                            `${process.env.NEXT_PUBLIC_API_URL}/article/upload-media`,
+                            {
+                              method: "POST",
+                              headers: {
+                                Authorization: `Bearer ${session?.accessToken}`,
+                              },
+                              body: uploadFormData,
+                            }
+                          );
+
+                          if (response.ok) {
+                            const data = await response.json();
+                            callback(data.url, { title: file.name });
+                            setUploadingMedia(false);
+                          } else {
+                            alert("Upload failed, please try to login again.");
+                            setUploadingMedia(false);
+                            console.error("Upload failed");
+                          }
+                        } catch (error) {
+                          console.error("Upload failed:", error);
+                        }
+                      }
+                    };
+
+                    input.click();
+                  },
+
+                  // Paste configuration
+                  paste_data_images: true,
+
+                  // Quick toolbars
+                  quickbars_selection_toolbar:
+                    "bold italic | quicklink h2 h3 blockquote",
+                  quickbars_insert_toolbar: "quickimage quicktable",
+
+                  // Context menu
+                  contextmenu: "link image table",
+
+                  // Table settings
+                  table_responsive_width: true,
+                  table_default_attributes: {
+                    border: "1",
+                  },
+
+                  // Link settings
+                  link_default_target: "_blank",
+                  link_assume_external_targets: true,
+                }}
+              />
+            </div>
 
             {errors.content && (
               <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
@@ -420,9 +532,10 @@ const ArticleUpload: React.FC = () => {
               </p>
             )}
             <p className="mt-1 text-xs text-gray-500">
-              Use the toolbar to format text. Drag & drop or paste images
-              directly, or use the image upload button. Images will be uploaded
-              to S3.
+              Use the toolbar to format text, upload images and videos. Drag &
+              drop or paste images directly. Click "Insert/Edit Image" or
+              "Insert/Edit Media" buttons to upload files. All uploads go to S3.
+              Images and videos are resizable.
             </p>
           </div>
 

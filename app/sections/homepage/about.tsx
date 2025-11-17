@@ -268,7 +268,7 @@ const About = () => {
           >
             ما هو{" "}
             <img
-              src="/images/PopCast Horizontal Logo.webp"
+              src="/images/PopCast Horizontal Logo.png"
               alt="PopCast Logo"
               loading="lazy"
               className="w-[120px] h-[20px] lg:w-[170px] mt-2 mr-2 lg:h-[30px]"

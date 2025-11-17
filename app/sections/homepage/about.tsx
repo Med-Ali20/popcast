@@ -327,7 +327,7 @@ const About = () => {
       >
         <div className="w-[75%] md:w-[50%] lg:w-[25%]">
           <Zoom triggerOnce>
-            <h3 className="text-lg flex flex-row-reverse justify-center gap-2 items-center md:text-2xl mx-auto font-bold mb-3 md:mb-10 w-fit">
+            <h3 dir="rtl" className="text-lg flex justify-center gap-2 items-center md:text-2xl mx-auto font-bold mb-3 md:mb-10 w-fit">
               <BookOpen />
               أحدث المقالات
             </h3>
@@ -346,7 +346,7 @@ const About = () => {
         </div>
         <div className="w-[75%] md:w-[50%] lg:w-[25%]">
           <Zoom triggerOnce>
-            <h3 className="text-lg flex flex-row-reverse justify-center gap-2 items-center md:text-2xl mx-auto font-bold mb-3 md:mb-10 w-fit">
+            <h3 className="text-lg flex justify-center gap-2 items-center md:text-2xl mx-auto font-bold mb-3 md:mb-10 w-fit">
               <Headphones />
               أحدث الحلقات
             </h3>

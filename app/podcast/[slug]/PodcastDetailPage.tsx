@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { ArrowLeft, Share2 } from "lucide-react";
+import { ArrowLeft, BookOpen, Headphones, Share2 } from "lucide-react";
 import { isAdmin } from "@/app/utils/auth";
 
 interface Category {
@@ -237,7 +237,10 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
             </button>
 
             {showShareMenu && (
-              <div dir="rtl" className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-lg border border-gray-200 p-2 z-20 min-w-[200px]">
+              <div
+                dir="rtl"
+                className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-lg border border-gray-200 p-2 z-20 min-w-[200px]"
+              >
                 <button
                   onClick={() => handleShare("facebook")}
                   className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition text-right"
@@ -466,6 +469,7 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
             className="text-lg font-bold mb-4 text-right text-primary"
             dir="rtl"
           >
+            <BookOpen className="inline w-6 h-6 mx-2" />
             أحدث المقالات
           </h3>
           <div className="bg-white rounded-lg shadow-md p-4">
@@ -500,6 +504,7 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
             className="text-lg font-bold mb-4 text-right text-primary"
             dir="rtl"
           >
+            <Headphones className="inline w-6 h-6 mx-2" />
             أحدث الحلقات
           </h3>
           <div className="bg-white rounded-lg shadow-md p-4">

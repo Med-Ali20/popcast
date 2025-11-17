@@ -1,15 +1,21 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo, useCallback } from "react";
 import { Zoom } from "react-awesome-reveal";
-import ImageCards from "../../components/cards";
+import dynamic from "next/dynamic";
+
+// Lazy load ImageCards
+const ImageCards = dynamic(() => import("../../components/cards"), {
+  loading: () => <div className="h-40" />,
+});
 
 interface FlipImageProps {
   decade: string;
   className: string;
 }
 
-const FlipImage: React.FC<FlipImageProps> = ({ decade, className }) => {
+// Memoized FlipImage component
+const FlipImage = memo<FlipImageProps>(({ decade, className }) => {
   const [currentImage, setCurrentImage] = useState(1);
   const [nextImage, setNextImage] = useState(2);
   const [isFlipping, setIsFlipping] = useState(false);
@@ -17,45 +23,50 @@ const FlipImage: React.FC<FlipImageProps> = ({ decade, className }) => {
   const [backSide, setBackSide] = useState(false);
 
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setIsFlipping(!isFlipping);
       setFrontSide(!frontSide);
       setBackSide(!backSide);
     }, 5000);
-  }, [isFlipping]);
+
+    return () => clearTimeout(timer);
+  }, [isFlipping, frontSide, backSide]);
+
+  const handleTransitionEnd = useCallback(() => {
+    if (backSide) {
+      setCurrentImage((nextImage % 5) + 1);
+    } else {
+      setNextImage((currentImage % 5) + 1);
+    }
+  }, [backSide, nextImage, currentImage]);
 
   return (
     <div className={`${className} perspective-1000`}>
       <div
-        className={`relative w-full h-full transition-transform duration-1000 [transform-style:preserve-3d] ${
-          isFlipping ? "rotate-y-180" : ""
-        }`}
+        className={`relative w-full h-full transition-transform duration-1000 [transform-style:preserve-3d]`}
         style={{
           transform: isFlipping ? "rotateY(180deg)" : "rotateY(0deg)",
         }}
-        onTransitionEnd={() => {
-          backSide
-            ? setCurrentImage((nextImage % 5) + 1)
-            : setNextImage((currentImage % 5) + 1);
-        }}
+        onTransitionEnd={handleTransitionEnd}
       >
-        {/* Front side */}
         <img
           src={`/images/${decade}/0${currentImage}.png`}
           alt={`${decade} front`}
+          loading="lazy"
           className="absolute inset-0 w-full h-full object-cover [backface-visibility:hidden] rounded-2xl"
         />
 
-        {/* Back side */}
         <img
           src={`/images/${decade}/0${nextImage}.png`}
           alt={`${decade} back`}
+          loading="lazy"
           className="absolute inset-0 w-full h-full object-cover [backface-visibility:hidden] rotate-y-180 rounded-2xl"
         />
       </div>
     </div>
   );
-};
+});
+FlipImage.displayName = "FlipImage";
 
 const History = () => {
   return (
@@ -63,7 +74,7 @@ const History = () => {
       <h2 className="text-white mx-auto text-center text-xl lg:text-4xl font-emirates lg:pt-5 font-bold w-fit my-5">
         تاريخ البوب العربي
       </h2>
-      <div className="text-white font-emirates hidden  md:flex relative mt-8 h-[20vw]">
+      <div className="text-white font-emirates hidden md:flex relative mt-8 h-[20vw]">
         <div className="flex flex-col items-center absolute left-[3vw] top-[17vw] lg:top-[20vw]">
           <h3 className="text-center text-[2.5vw] my-4 font-bold">
             2010s–2020s
@@ -110,11 +121,11 @@ const History = () => {
         </div>
       </div>
 
-      {/* Decade Image Row */}
       <div className="relative hidden md:block w-full h-[40vw]">
         <img
           src="/elements/17.png"
           alt=""
+          loading="lazy"
           className="absolute bottom-0 left-[50%] translate-x-[-50%] w-[65vw]"
         />
 
@@ -140,6 +151,7 @@ const History = () => {
         <img
           src="/elements/08.png"
           alt=""
+          loading="lazy"
           className="absolute w-[25vw] top-[-11vw] left-[50%] translate-x-[-50%] mb-[-7vw] z-10"
         />
         <div className="w-full h-[20%] absolute top-0 bg-primary brightness-[105%] shadow-[0_3px_10px_rgb(0,0,0,0.2)]"></div>

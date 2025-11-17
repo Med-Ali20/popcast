@@ -385,7 +385,7 @@ const ArticleUpload: React.FC = () => {
               } rounded-lg overflow-hidden`}
             >
               <Editor
-                apiKey=""
+                apiKey={process.env.NEXT_PUBLIC_TINYMCE_API_KEY}
                 onInit={(evt, editor) => (editorRef.current = editor)}
                 value={formData.content}
                 onEditorChange={handleEditorChange}
@@ -451,6 +451,7 @@ const ArticleUpload: React.FC = () => {
 
                   // Video upload handler (for local video files)
                   file_picker_types: "image media",
+                  // @ts-ignore
                   file_picker_callback: function (callback, value, meta) {
                     // Create file input
                     const input = document.createElement("input");

@@ -118,7 +118,7 @@ const Hero = () => {
                 >
                   {/* Video overlay */}
                   <video
-                    src="/images/video.mp4"
+                    src="/images/video.webm"
                     autoPlay
                     muted
                     loop

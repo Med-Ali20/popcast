@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
-import Hero from "./sections/homepage/hero";
-import About from "./sections/homepage/about";
-import History from "./sections/homepage/history";
-import { Suspense } from "react";
+import { Suspense, lazy } from "react";
 import Loading from "./components/loading";
+import Hero from "./sections/homepage/hero";
+
+// Lazy load heavy components
+const About = lazy(() => import("./sections/homepage/about"));
+const History = lazy(() => import("./sections/homepage/history"));
 
 export const metadata: Metadata = {
   title: "بوب كاست - مساحة إبداعية جديدة للبوب العربي",
@@ -29,7 +31,6 @@ export const metadata: Metadata = {
     "لقاءات فنية",
     "كواليس الفن",
   ],
-
   openGraph: {
     title: "بوب كاست - مساحة إبداعية جديدة للبوب العربي",
     description:
@@ -47,7 +48,6 @@ export const metadata: Metadata = {
     ],
     locale: "ar_EG",
   },
-
   twitter: {
     card: "summary_large_image",
     title: "بوب كاست - مساحة إبداعية جديدة للبوب العربي",
@@ -56,11 +56,9 @@ export const metadata: Metadata = {
     images: ["/images/homepage-twitter.jpg"],
     creator: "@popcast",
   },
-
   alternates: {
     canonical: "https://itspopcast.com",
   },
-
   other: {
     "theme-color": "#ffffff",
     "og:site_name": "بوب كاست",
@@ -69,14 +67,16 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <Suspense fallback={<Loading />}>
-      <main>
-        <div className="overflow-x-hidden">
-          <Hero />
+    <main>
+      <div className="overflow-x-hidden">
+        <Hero />
+        <Suspense fallback={<Loading />}>
           <About />
+        </Suspense>
+        <Suspense fallback={<Loading />}>
           <History />
-        </div>
-      </main>
-    </Suspense>
+        </Suspense>
+      </div>
+    </main>
   );
 }

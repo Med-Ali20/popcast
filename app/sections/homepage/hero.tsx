@@ -51,7 +51,7 @@ const Hero = () => {
               {/* First two images with Zoom animation */}
               <Zoom triggerOnce delay={0}>
                 <img
-                  src="/elements/02.png"
+                  src="/elements/02.webp"
                   alt=""
                   className="absolute w-full top-[0] left-[40%] md:-top-[20%] md:left-1/2 -translate-x-1/2"
                 />
@@ -59,7 +59,7 @@ const Hero = () => {
 
               <Zoom triggerOnce delay={200}>
                 <img
-                  src="/elements/03.png"
+                  src="/elements/03.webp"
                   alt=""
                   className="absolute w-full -top-[2%] left-[35%] md:-top-[5%] md:left-[42.857%] -translate-x-1/2"
                 />
@@ -68,31 +68,31 @@ const Hero = () => {
               {/* Rest of the images with Fade animation to avoid positioning issues */}
               <Slide direction="up" triggerOnce delay={400}>
                 <img
-                  src="/elements/06.png"
+                  src="/elements/06.webp"
                   alt=""
                   className="absolute w-3/5 top-[5%] left-[15%] md:w-2/5 md:top-0 md:left-1/4 -translate-x-1/2"
                 />
               </Slide>
 
               <img
-                src="/elements/04.png"
+                src="/elements/04.webp"
                 alt=""
                 className="absolute w-3/5 -top-[10%] left-1/2 md:w-2/5 md:-top-[20%] md:left-1/2 -translate-x-1/2"
               />
 
               <img
-                src="/elements/01.png"
+                src="/elements/01.webp"
                 alt=""
                 className="absolute w-4/5 top-[24%] -right-[15%] md:w-1/2 md:top-0 md:-right-[5%]"
               />
 
               <img
-                src="/elements/07.png"
+                src="/elements/07.webp"
                 alt=""
                 className="absolute w-1/2 left-[0%] top-[40%] md:w-1/3 md:left-[5%] md:top-[30%]"
               />
               <img
-                src="/elements/05.png"
+                src="/elements/05.webp"
                 alt=""
                 className="absolute w-3/5 left-[20%] top-[45%] md:w-2/5 md:left-[30%] md:top-[35%]"
               />
@@ -132,14 +132,14 @@ const Hero = () => {
 
                 {/* TV frame image (above video) */}
                 <img
-                  src="/elements/09.png"
+                  src="/elements/09.webp"
                   alt="TV"
                   className="relative z-40 pointer-events-none"
                 />
               </div>
 
               <img
-                src="/elements/08.png"
+                src="/elements/08.webp"
                 alt=""
                 className="absolute w-3/5 right-0 md:right-[-5%] top-[75%] md:w-2/5 md:right-[5%] md:top-[70%]"
               />
@@ -180,7 +180,7 @@ const Hero = () => {
               </div>
 
               <img
-                src="/elements/13.png"
+                src="/elements/13.webp"
                 alt=""
                 className="w-[70px] ml-5 relative z-10"
               />
@@ -201,7 +201,7 @@ const Hero = () => {
 
               <div className="relative w-fit ml-5 z-10">
                 <img
-                  src="/elements/eye.png"
+                  src="/elements/eye.webp"
                   alt=""
                   className="w-[70px] h-[70px] object-contain relative"
                 />

@@ -123,7 +123,7 @@ const History = () => {
 
       <div className="relative hidden md:block w-full h-[40vw]">
         <img
-          src="/elements/17.png"
+          src="/elements/17.webp"
           alt=""
           loading="lazy"
           className="absolute bottom-0 left-[50%] translate-x-[-50%] w-[65vw]"
@@ -149,7 +149,7 @@ const History = () => {
 
       <div className="relative w-full bg-primary hidden md:block h-[15vw]">
         <img
-          src="/elements/08.png"
+          src="/elements/08.webp"
           alt=""
           loading="lazy"
           className="absolute w-[25vw] top-[-11vw] left-[50%] translate-x-[-50%] mb-[-7vw] z-10"

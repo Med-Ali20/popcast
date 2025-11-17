@@ -29,7 +29,7 @@ const Header = () => {
   const headerBg = isScrolled ? "bg-secondary" : "bg-primary";
   const textColor = isScrolled ? "text-primary" : "text-secondary";
   const logoSrc = isScrolled ? "/images/PopCast Horizontal Logo-2.png" : "/images/PopCast Horizontal Logo.png";
-  const iconSrc = isScrolled ? "/elements/36.png" : "/elements/26.png";
+  const iconSrc = isScrolled ? "/elements/36.webp" : "/elements/26.webp";
 
   return (
     <>
@@ -93,7 +93,7 @@ const Header = () => {
       >
         {/* Menu Header */}
         <div className="flex items-center justify-between p-6 border-b border-secondary/20">
-          <img src="/elements/26.png" className="w-[50px]" alt="" />
+          <img src="/elements/26.webp" className="w-[50px]" alt="" />
           <button
             onClick={closeMenu}
             className="text-secondary p-2 focus:outline-none"

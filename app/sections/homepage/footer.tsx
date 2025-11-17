@@ -21,7 +21,7 @@ const Footer = () => {
 
   return (
     <footer className="w-full bg-primary relative overflow-hidden min-h-[70px] lg:h-auto">
-      <div className="z-20 pb-4 pt-10 w-[300px] lg:w-[450px] absolute left-0 bottom-0 w-[90%] bg-primary flex items-center bg-[url('/elements/24.png')] bg-no-repeat bg-contain bg-left-bottom">
+      <div className="z-20 pb-4 pt-10 w-[300px] lg:w-[450px] absolute left-0 bottom-0 w-[90%] bg-primary flex items-center bg-[url('/elements/24.webp')] bg-no-repeat bg-contain bg-left-bottom">
         {/* Desktop icons */}
         <div className="gap-4 hidden lg:flex items-center mx-4">
           <a
@@ -154,7 +154,7 @@ const Footer = () => {
           </a>
         </div>
         <a href="https://arabiapop.com" className="w-[20%] lg:w-[25%] mx-4" target="_blank">
-          <img src="/elements/25.png" alt="" />
+          <img src="/elements/25.webp" alt="" />
         </a>
         <p className="text-white mr-auto lg:text-sm text-[10px]">2026 ©</p>
       </div>

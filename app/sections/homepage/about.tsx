@@ -268,7 +268,7 @@ const About = () => {
           >
             ما هو{" "}
             <img
-              src="/images/PopCast Horizontal Logo.png"
+              src="/images/PopCast Horizontal Logo.webp"
               alt="PopCast Logo"
               loading="lazy"
               className="w-[120px] h-[20px] lg:w-[170px] mt-2 mr-2 lg:h-[30px]"
@@ -279,7 +279,7 @@ const About = () => {
           <Slide direction="up" triggerOnce>
             <div className="flex flex-col items-center text-center">
               <img
-                src="/elements/16.png"
+                src="/elements/16.webp"
                 alt="مقالات تحليلية"
                 loading="lazy"
                 className="w-[120px]"
@@ -293,7 +293,7 @@ const About = () => {
             </div>
             <div className="flex flex-col items-center text-center ml-4">
               <img
-                src="/elements/15.png"
+                src="/elements/15.webp"
                 alt="ميني-دوكس"
                 loading="lazy"
                 className="w-[120px]"
@@ -306,7 +306,7 @@ const About = () => {
             </div>
             <div className="flex flex-col items-center text-center">
               <img
-                src="/elements/14.png"
+                src="/elements/14.webp"
                 alt="لقاءات"
                 loading="lazy"
                 className="w-[120px]"

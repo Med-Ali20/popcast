@@ -88,6 +88,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+       <head>
+        <link rel="preload" href="/elements/11.webp" as="image" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${emirates.variable} bg-beige antialiased`}
       >

@@ -180,7 +180,7 @@ const PodcastDetailPage = ({ initialPodcast }: PodcastDetailPageProps) => {
   const youtubeVideoId = getYouTubeVideoId(podcast.youtube);
 
   return (
-    <main className="flex flex-col items-center bg-gray-50 overflow-x-hidden min-h-screen">
+    <main className="flex flex-col items-center font-emirates bg-gray-50 overflow-x-hidden min-h-screen">
       <section className="w-screen flex flex-col h-[400px] overflow-y-hidden relative">
         <img
           src={podcast.thumbnailUrl || "/images/podcast.jpg"}

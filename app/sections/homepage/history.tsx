@@ -80,7 +80,7 @@ const History = () => {
             2010s–2020s
           </h3>
           <p dir="rtl" className="max-w-[20vw] text-[1.05vw] text-center">
-            في هذا العقد برزت التحديات: اضطرابات سياسية آثرت على الإنتاج، وتراجع
+            في هذا العقد برزت التحديات: اضطرابات سياسية أثرت على الإنتاج، وتراجع
             الدعم المالي، وعدم مواكبة سريعة للتحولات الرقمية. رغم ذلك، ظل نجوم
             التسعينات والألفينات مسيطرين، بينما واجه الجيل الجديد صعوبة في ترسيخ
             مكانته. كانت مرحلة انتقالية كشفت هشاشة الصناعة أمام ثورة البث عبر
@@ -91,8 +91,8 @@ const History = () => {
         <div className="flex flex-col items-center absolute left-[27vw] top-[1vw] lg:top-[4vw]">
           <h3 className="text-center text-[2.5vw] my-4 font-bold">2000s</h3>
           <p dir="rtl" className="max-w-[20vw] text-[1.05vw] text-center">
-            الألفينات شهدت الانفجار الكبير لصعود القنوات الفضائية المتخصصة مثل
-            روتانا، ميلودي، ومازيكا. الألبومات والإنتاجات البصرية وصلت إلى
+            الألفينات شهدت الانفجار الكبير بعد صعود القنوات الفضائية المتخصصة
+            مثل روتانا، ميلودي، و مزيكا. الألبومات والإنتاجات البصرية وصلت إلى
             ذروتها، واصبحت المنافسة بين النجوم مشتعلة على مدار الساعة. هذه حقبة
             قدّمت النضج الفني والتجريب البصري، ورسّخت الصورة الحديثة للبوب
             العربي في الذاكرة الجماعية.
@@ -149,10 +149,15 @@ const History = () => {
 
       <div className="relative w-full bg-primary hidden md:block h-[15vw]">
         <img
-          src="/elements/08.webp"
+          src="/elements/logo-no-cd.webp"
           alt=""
           loading="lazy"
           className="absolute w-[25vw] top-[-11vw] left-[50%] translate-x-[-50%] mb-[-7vw] z-10"
+        />
+        <img
+          src="/elements/cd.webp"
+          alt=""
+          className="absolute top-[-30.4%] left-[46.15%] z-20 w-[8.2vw] h-[8.2vw] spin-slow"
         />
         <div className="w-full h-[20%] absolute top-0 bg-primary brightness-[105%] shadow-[0_3px_10px_rgb(0,0,0,0.2)]"></div>
       </div>

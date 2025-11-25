@@ -76,3 +76,7 @@ footer {
     width: 48px;
   }
 }
+
+.spin-slow {
+  animation: spin 6s linear infinite;
+}

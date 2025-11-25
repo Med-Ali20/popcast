@@ -118,7 +118,7 @@ const Hero = () => {
                 >
                   {/* Video overlay */}
                   <video
-                    src="/images/video.webm"
+                    src="/images/video.mp4"
                     autoPlay
                     muted
                     loop
@@ -138,11 +138,14 @@ const Hero = () => {
                 />
               </div>
 
-              <img
-                src="/elements/08.webp"
-                alt=""
-                className="absolute w-3/5 right-0 md:right-[-5%] top-[75%] md:w-2/5 md:right-[5%] md:top-[70%]"
-              />
+              <div className="absolute w-3/5 right-0 md:right-[-5%] top-[75%] md:w-2/5 md:right-[5%] md:top-[70%]">
+                <img src="/elements/logo-no-cd.webp" alt="" className="" />
+                <img
+                  src="/elements/cd.webp"
+                  alt=""
+                  className="absolute w-[13.5vw] h-[13.5vw] top-[27%] left-[35%] md:top-[26.5%] md:left-[34.6%] md:w-[7vw] md:h-[7vw] spin-slow"
+                />
+              </div>
             </div>
           </Slide>
 

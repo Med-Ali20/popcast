@@ -272,7 +272,6 @@ const ArticlesPage: React.FC = () => {
       const data = await response.json();
 
       setArticles(data.articles || []);
-      console.log("articles data:", data);
       setPagination(data.pagination);
     } catch (error) {
       console.error("Error fetching articles:", error);

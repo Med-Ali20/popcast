@@ -37,7 +37,6 @@ const ArticleDetailPage = ({ initialArticle }: ArticleDetailPageProps) => {
   });
 
   const isUserAdmin = isAdmin(session);
-  console.log('article: ', initialArticle)
 
   useEffect(() => {
     fetchRecentContent();

@@ -21,6 +21,7 @@ const ArticleEditPage = () => {
 
   const [formData, setFormData] = useState({
     title: "",
+    subTitle: "",
     content: "",
     author: "",
     category: "",
@@ -48,6 +49,7 @@ const ArticleEditPage = () => {
       const article = await response.json();
       setFormData({
         title: article.title || "",
+        subTitle: article.subTitle || "",
         content: article.content || "",
         author: article.author || "",
         category: article.category || "",
@@ -186,6 +188,7 @@ const ArticleEditPage = () => {
 
       const updateData: any = {
         title: formData.title,
+        subTitle: formData.subTitle,
         content: formData.content,
         author: formData.author,
         category: formData.category,
@@ -293,7 +296,7 @@ const ArticleEditPage = () => {
 
           {/* Form Fields */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6" dir="rtl">
-            <div>
+            <div className="md:col-span-2">
               <label className="block text-sm font-semibold mb-2">
                 العنوان *
               </label>
@@ -302,6 +305,20 @@ const ArticleEditPage = () => {
                 value={formData.title}
                 onChange={(e) =>
                   setFormData({ ...formData, title: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-sm font-semibold mb-2">
+                العنوان الفرعي
+              </label>
+              <input
+                type="text"
+                value={formData.subTitle}
+                onChange={(e) =>
+                  setFormData({ ...formData, subTitle: e.target.value })
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               />
@@ -333,7 +350,7 @@ const ArticleEditPage = () => {
               />
             </div>
 
-            <div>
+            <div className="md:col-span-2">
               <label className="block text-sm font-semibold mb-2">
                 الوسوم (مفصولة بفواصل)
               </label>

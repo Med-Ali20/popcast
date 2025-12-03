@@ -2,8 +2,6 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { NextAuthOptions } from "next-auth";
 
-console.log("🔍 NEXTAUTH_SECRET exists:", !!process.env.NEXTAUTH_SECRET);
-console.log("🔍 NEXTAUTH_URL:", process.env.NEXTAUTH_URL);
 
 // ✅ Extend both JWT and Session types
 declare module "next-auth" {

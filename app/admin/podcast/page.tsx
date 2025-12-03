@@ -225,8 +225,6 @@ const PodcastUpload = () => {
       }
 
       const result = await response.json();
-      console.log("Podcast uploaded:", result);
-
       setSuccessMessage("Podcast uploaded successfully!");
 
       setFormData({

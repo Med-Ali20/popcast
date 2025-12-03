@@ -59,7 +59,6 @@ const handleSubmit = async (e: any) => {
       redirect: false,
     });
 
-    console.log("SignIn result:", result); // Debug
 
     if (result?.error) {
       // NextAuth returns "CredentialsSignin" as the error for failed auth
@@ -72,7 +71,6 @@ const handleSubmit = async (e: any) => {
     }
 
     if (result?.ok) {
-      console.log("Login successful");
       router.push("/admin/dashboard");
     }
   } catch (err) {

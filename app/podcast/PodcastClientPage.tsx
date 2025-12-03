@@ -203,7 +203,6 @@ const PodcastPage = () => {
       const data = await response.json();
 
       setPodcasts(data.podcasts || []);
-      console.log("searched data:", data);
       setPagination(data.pagination);
     } catch (error) {
       console.error("Error fetching podcasts:", error);
@@ -239,7 +238,6 @@ const PodcastPage = () => {
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
-    console.log("podcast state: ", podcasts);
     setCurrentPage(1);
   };
 

@@ -21,14 +21,7 @@ import { useSession } from "next-auth/react";
 
 const Dashboard = () => {
   const { data: session, status } = useSession();
-  console.log("status: ", status);
-  console.log(session);
-  console.log("token: ", session?.accessToken);
   const router = useRouter();
-
-  console.log("Dashboard render - Status:", status);
-  console.log("Dashboard render - Session:", session);
-  console.log("Dashboard render - Token:", session?.accessToken);
 
   const [showPasswords, setShowPasswords] = useState({
     current: false,
@@ -102,8 +95,6 @@ const Dashboard = () => {
         setMessage({type: 'error', text: 'Failed to change password'})
       }
 
-      console.log(response)
-
       // Reset form
       setPasswordData({
         currentPassword: "",
@@ -133,9 +124,6 @@ const Dashboard = () => {
     }
   }, [status, router]);
 
-  useEffect(() => {
-    console.log("tokennn: ", session?.accessToken);
-  }, [session]);
 
   // ✅ Wait for session to load
   if (status === "loading") {
